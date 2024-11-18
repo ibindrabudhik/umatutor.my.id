@@ -1,0 +1,126 @@
+
+
+        .body-initial {background-color: rgb(255, 255, 255);
+        }
+        .background-initial {background-color: rgb(255, 255, 255); top: 5px; left: 154px; width: 806px; height: 1015px;
+        }
+        .silex-id-1726124185944-0 {top: 0px; left: 0px; height: 860px; width: 800px;
+        }
+        .silex-id-1726127964495-1 {top: 800px; left: 440px; height: 140px; width: 306px;
+        }
+        .silex-id-1727623976554-3 {top: 240px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727623985421-4 {top: 270px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727623997962-5 {top: 300px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727624070237-6 {top: 330px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1726124345213-6 {top: 180px; left: 260px; height: 40px; width: 440px;
+        }
+        .silex-id-1727624135663-7 {top: 360px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727624191180-8 {top: 390px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727624205437-9 {top: 420px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727624218926-10 {top: 450px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727624273956-11 {top: 480px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1726125018688-23 {top: 610px; left: 140px; height: 40px; width: 40px;
+        }
+        .silex-id-1726125029695-24 {top: 670px; left: 140px; height: 40px; width: 40px;
+        }
+        .silex-id-1726124405646-7 {top: 350px; left: 100px; height: 40px; width: 40px;
+        }
+        .silex-id-1726124416973-9 {top: 330px; left: 200px; height: 40px; width: 40px;
+        }
+        .silex-id-1726124422593-10 {top: 390px; left: 200px; height: 40px; width: 40px;
+        }
+        .silex-id-1726124429906-11 {top: 330px; left: 300px; height: 40px; width: 40px;
+        }
+        .silex-id-1726124435124-12 {top: 390px; left: 300px; height: 40px; width: 40px;
+        }
+        .silex-id-1727624301447-12 {top: 510px; left: 360px; height: 20px; width: 360px;
+        }
+        .silex-id-1727676331181-16 {top: 260px; left: 90px; height: 60px; width: 140px; color: rgb(255, 255, 255);
+        }
+        .silex-id-1727676370411-17 {top: 260px; left: 250px; height: 60px; width: 100px; color: rgb(255, 255, 255);
+        }
+        .silex-id-1726124555929-21 {top: 640px; left: 100px; height: 40px; width: 20px; font-size: 32px; font-weight: bold; color: rgb(255, 255, 255);
+        }
+        .silex-id-1726126934118-0 {top: 650px; left: 140px; height: 20px; width: 40px; color: rgb(255, 255, 255);
+        }
+        .silex-id-1726124445278-14 {top: 360px; left: 160px; height: 40px; width: 20px; font-weight: bold; text-align: left; font-size: 32px; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1726124514116-19 {top: 360px; left: 260px; height: 40px; width: 20px; font-size: 32px; font-weight: bold; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1726124297515-5 {top: 180px; left: 150px; height: 40px; width: 20px; font-size: 32px; font-weight: bold; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1726124483689-16 {top: 370px; left: 200px; height: 20px; width: 40px; color: rgb(240, 240, 240);
+        }
+        .silex-id-1726124532881-20 {top: 370px; left: 300px; height: 20px; width: 40px; color: rgb(255, 255, 255);
+        }
+        .silex-id-1727676396677-18 {top: 460px; left: 100px; height: 80px; width: 240px; color: rgb(255, 255, 255); text-align: left;
+        }
+        .silex-id-1726124971932-22 {top: 560px; left: 100px; height: 20px; width: 560px; color: rgb(255, 255, 255);
+        }
+        .silex-id-1729433469333-1 {top: 120px; left: 100px; height: 40px; width: 40px; background-color: rgb(255, 255, 255); text-align: center;
+        }
+        .silex-id-1729433514748-2 {top: 180px; left: 100px; height: 40px; width: 40px; background-color: rgb(255, 255, 255); text-align: center;
+        }
+        .silex-id-1729433546188-3 {top: 180px; left: 180px; height: 40px; width: 40px; background-color: rgb(255, 255, 255); text-align: center;
+        }
+        .purple-button {
+                position: relative;
+                top: 871px; /* Adjusted to move it below the "Done" and "Hint" buttons */
+                left: 70px; /* Adjust as necessary */
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: white;
+                background-color: purple;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+        }
+
+        .refresh-button{
+                position: relative;
+                top: 831px; /* Adjusted to move it below the "Done" and "Hint" buttons */
+                left: 270px; /* Adjust as necessary */
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: white;
+                background-color: purple;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+        }
+            
+        .refresh-button:hover, .purple-button:hover {
+                background-color: darkmagenta;
+        }
+
+        .refresh-button {
+                cursor: pointer;
+                border: none;
+                outline: none;
+        }
+
+        .image-title {
+                position: absolute;
+                top: 10px;  /* Adjust as needed */
+                right: 200px;  /* Adjust as needed */
+                font-size: 24px;  /* Adjust font size */
+                color: #000;  /* Adjust text color */
+                font-weight: bold;
+                background-color: rgba(255, 255, 255, 0.7);  /* Optional background */
+                padding: 5px;
+                z-index: 10; 
+            }
+    

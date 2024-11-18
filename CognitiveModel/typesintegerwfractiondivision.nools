@@ -1,0 +1,174 @@
+//DEFINE Problem
+define Problem{
+    // Wholenum ya wholenum yesss
+    // fraction sebelah kanan ditandai dengan 1
+    wholenum: null,
+    pembilang1: null,
+    penyebut1: null,
+    pembilang1IE: null,
+    penyebut1IE: null,
+    wholenumIE: null,
+    done: false,
+    constructor: function(wn, wnie, en1, den1, enie1, denie1){
+        this.pembilang1 = en1;
+        this.penyebut1 = den1;
+        this.pembilang1IE = enie1;
+        this.penyebut1IE = denie1;
+        this.wholenum = wn;
+        this.wholenumIE = wnie;
+    }
+}
+
+define StudentError{
+    //Error student ada:
+    //1. Untuk enter pembilang (ada 2)
+    //2. Untuk enter penyebut (ada 2)
+    //3. Untuk enter results (ada penyebut dan pembilang)
+    //4. Untuk enter hasil sederhana (ada penyebut dan pembilang)
+    errorWholeNum: null,
+    errorPembilang1: null,
+    errorPenyebut1: null,
+    errorConWholeNum: null,
+    errorConPenyebut1: null,
+    errorConPembilang1: null,
+    errorResPembilang: null,
+    errorResPenyebut: null,
+    errorSimplifiedPembilang: null,
+    errorSimplifiedPenyebut: null,
+    
+    constructor: function(ewn, erpm1, erpn1, ecwn, ecpm1, ecpn1, rpm, rpn, spm, spn){
+      this.errorWholeNum = ewn;
+      this.errorPembilang1 = erpm1;
+      this.errorPenyebut1 = erpn1;
+      this.errorConWholeNum = ecwn;
+      this.errorConPembilang1 = ecpm1;
+      this.errorConPenyebut1 = ecpn1; 
+      this.errorResPembilang = rpm;
+      this.errorResPenyebut = rpn;
+      this.errorSimplifiedPembilang = spm;
+      this.errorSimplifiedPenyebut = spn;
+    }
+}
+
+define rewriteProblem{
+    //wholenum dan pembilang  fraction 1 
+    depembilang1: null,
+    wholenum: null,
+    depembilang1IE: null,
+    wholenumIE: null,
+
+    //penyebut fraction 1
+    depenyebut1: null,
+    depenyebut1IE: null,
+
+     constructor: function(wn, wnie, dpem1, dpem1ie, dpen1, dpen1ie){
+        this.wholenum = wn;
+        this.wholenumIE = wnie;
+        this.depembilang1 = dpem1;
+        this.depembilang1IE = dpem1ie;
+        this.depenyebut1 = dpen1;
+        this.depenyebut1IE = dpen1ie;
+    }
+}
+
+define divisionConversion{
+    // fraction sebelah kiri ditandai dengan 1
+    // fraction sebelah kanan ditandai dengan 2
+
+    //wholenum dan pembilang fraction 1
+    conpembilang1: null,
+    conWholeNum: null,
+    conpembilang1IE: null,
+    conWholeNumIE: null,
+
+    //penyebut fraction 1 
+    conpenyebut1: null,
+    conpenyebut1IE: null,
+
+    doneConversion: false,
+
+    constructor: function(wn, wnie, cpm1, cpmie1, cpn1, cpnie1){
+        this.conWholeNum = wn;
+        this.conWholeNumIE = wnie;
+        this.conpembilang1  = cpm1;
+        this.conpembilang1IE = cpmie1;
+        this.conpenyebut1 = cpn1;
+        this.conpenyebut1IE = cpnie1;
+    }
+}
+
+define firstResult{
+    //results
+    repembilang: null,
+    repenyebut: null,
+    repemIE: null,
+    repenIE: null,
+    donefirstResult: false,
+
+    constructor: function(repem, repen, rpemIE, rpenIE){
+        this.repembilang = repem;
+        this.repenyebut = repen;
+        this.repemIE = rpemIE;
+        this.repenIE = rpenIE;
+    }
+}
+
+define finalRes{
+    //simplified
+    simpembilang: null,
+    simpenyebut: null,
+    simpemIE: null,
+    simpenIE: null,
+    constructor: function(spem, spen, spemIE, spenIE){
+        this.simpembilang = spem;
+        this.simpenyebut = spen;
+        this.simpenIE = spenIE;
+        this.simpemIE = spemIE;
+    }
+}
+
+// Tipe lainnya yang menjadi 'standar' untuk Nools model tracer.
+// Bagian ini merepresentasikan input siswa dalam working memory milik tracer.
+define StudentValues {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s,a,i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+// Fungsi hint
+define Hint {
+  precedence: 0,
+  msg: "",
+  constructor: function(m, optPrecedence) {
+  	this.msg = m;
+  	this.precedence = optPrecedence || 0;
+  }
+}
+
+define IsHintMatch {
+  constructor: function() {
+  }
+}
+
+// Fungsi TPA
+define TPA {
+  selection: null,
+  action: null,
+  input: null,
+  constructor: function(s, a, i) {
+  	if(Array.isArray(s)){
+  		this.selection = s[0];
+  		this.action = s[1];
+  		this.input = s[2];
+  	} else{
+  		this.selection = s;
+  		this.action = a;
+  		this.input = i;
+  	}
+  }
+}

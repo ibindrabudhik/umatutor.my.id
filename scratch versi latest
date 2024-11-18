@@ -1,0 +1,192 @@
+import("types.nools");
+
+rule Bootstrap {
+    when {
+        t: Boolean t == true from true;
+    } then {
+        // Membuat problem baru di working memory.
+        assert(new Problem(coins,fi,ci,headers,null,null));
+
+        // Buat facts pada working memory BottomUp mulai dari indeks 0 sampai indeks 6
+        // BottomUp(colmn, cc, bv, tbv, ccie, bvie, tbvie, csie)
+		for (var i = 0; i <= 6; i++) {
+			//Kalau masih koin pertama, max adalah koinnya sendiri, beforeValue dan twoBeforeValue nya tidak ada (0)
+            if (i == 0) {
+                assert(new BottomUp(0, 0, 0, 0, "coinRowTab.R1C1", null, null, "coinRowTab.R2C1")); //gaada interface untuk bvie dan tbvie.
+                // console.log("Zero success");
+            } else if (i == 1){
+                assert(new BottomUp(i, coins[i-1], 0, 0, "coinRowTab.R1C2", "coinRowTab.R1C"+i, null, "coinRowTab.R2C2")); //gaada interface untuk tbvie.
+                // console.log("One success");
+            } else if (i == 2){
+                assert(new BottomUp(i, coins[i-1], coins[i-2], 0, "coinRowTab.R1C3", "coinRowTab.R1C"+i, "coinRowTab.R1C"+(i-1),"coinRowTab.R2C"+(i+1)));
+                // console.log("two success");
+                
+            } else {
+                assert(new BottomUp(i, coins[i-1], null, null, "coinRowTab.R1C"+(i+1), "coinRowTab.R1C"+i, "coinRowTab.R1C"+(i-1),"coinRowTab.R2C"+(i+1)));
+                // console.log("success");
+            }	
+		}
+        printFacts(BottomUp);
+        printFacts(Problem);
+        
+        // Inisiasi interfacenya
+        // COLUMN 0 
+        assert(new TPA("coinRowTab.R0C0", "UpdateTextField","i"));
+        assert(new TPA("coinRowTab.R1C0", "UpdateTextField",fi));
+        assert(new TPA("coinRowTab.R2C0", "UpdateTextField",ci));
+
+        // COLUMN 1
+        assert(new TPA("coinRowTab.R0C1", "UpdateTextField",headers[0]));
+        assert(new TPA("coinRowTab.R1C1", "UpdateTextField","-"));
+        
+        //COLUMN 2 - 7
+        for (i = 2; i <= 7; i++){
+            assert(new TPA("coinRowTab.R0C"+i, "UpdateTextField",headers[i-1]));
+            assert(new TPA("coinRowTab.R1C"+i, "UpdateTextField",coins[i-2]));
+        }
+
+        setProblemAttribute("use_backtracking", true);
+        halt();
+    }
+}
+
+//PROBLEMS: PAS MASUKIN 0 MALAH MASIH enterTableSolution 2X BARU checkAndUpdateValues...
+
+rule enterTableSolution {
+    when{
+        // Cocokkan terlebih dahulu fakta Bottom Up yang siap untuk dikerjakan
+        // Fact Bottom Up siap dikerjakan apabila:
+        // 1. Memiliki before value
+        // 2. Memiliki two before value
+        // 3. Nilai solution belum diinput
+
+        // Cari semua fact BottomUp yang memiliki constraint seperti poin 1,2,3.
+        bu: BottomUp bu.beforeValue != null && bu.twoBeforeValue != null && bu.solution == null
+        {column: colmn, currentCoin: curc, beforeValue: onebv, twoBeforeValue: twobv, beforeValueIE: bie, twoBeforeValueIE: tie, currentSolutionIE: cell};
+        
+        // Ambil nilai koin-koin yang akan digunakan yes
+        prob : Problem {coins: coinz};
+    } then {
+        // Fungsi solusi tabel
+        // 1. Tentukan solution dengan membandingkan nilai sebelumnya dengan nilai dua kolom sebelumnya + koin saat ini. DONE YES
+        // 2. Buat pesan hint untuk memasukkan nilai
+        // 3. Periksa input, kalau udah sesuai update working memorynya :D
+
+        // Buat variabel solusi
+        let sol = Math.max(onebv, curc + twobv);
+
+        // Buat pesan hint untuk memasukkan nilai 
+        let hintMessage = "Masukkan " + sol + " pada kolom ke " + colmn + ".";
+        assert(new Hint(hintMessage));
+
+        // Periksa input
+        if(checkSAI({selection: cell, action: "UpdateTextField", input: sol.toString()})){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut ke kolom berikutnya.</html>");
+            modify(bu, "solution", sol); //Update fact bottomup yang ada
+            halt();
+        } else {
+            backtrack();
+        }
+        
+        setTracerLogFlags("debug");
+    }
+    
+}
+// rule untuk update facts pada working memory setelah siswa mengisi
+rule checkAndUpdateValues {
+    when {
+        // Ambil semua yang memiliki IE, dan before value dan twobefore valuenya memiliki nilai null
+        bu: BottomUp bu.beforeValueIE != null && bu.twoBeforeValueIE != null && bu.beforeValue == null && bu.twoBeforeValue == null
+        {column: colmn, beforeValue: onebv, twoBeforeValue: twobv, beforeValueIE: bie, twoBeforeValueIE: tie};
+    }
+    then {
+        let bvalue = document.getElementById(bie).innerHTML;
+        let tbvalue = document.getElementById(tie).innerHTML;
+
+        if(checkSAI({selection: bie, action: "UpdateTextField", input: "don't_care"}) && bvalue != null && tbvalue != null){
+            modify(bu, "onebv", bvalue);
+            modify(bu, "twobv", tbvalue);
+        } else {
+            backtrack();
+        }
+        //setTracerLogFlags("debug");
+    }
+}
+
+rule enterSelectedCoin{
+    when{
+        prb: Problem prb.coinSelected != null
+        {maxProfit: mp, coinSelectedIE: cell};
+    } then{
+
+    }
+}
+
+// Event listener to check for changes
+        function updateFractionBars() {
+            modify(fbviz1, "SetPieces", "1/3+1/3+(0*1/3)");
+            // Get values from rewholenum, reenum1, redenom1
+            let rewholenum = document.getElementById('rewholenum').querySelector('input').value || 0;
+            let reenum1 = document.getElementById('reenum1').querySelector('input').value || 0;
+            let redenom1 = document.getElementById('redenom1').querySelector('input').value || 1; // Avoid division by 0
+
+            // Calculate total iterations
+            let totalIterations = rewholenum * reenum1;
+
+            // Fraction to add in each iteration
+            let fractionStr = "1/" + redenom1; // The string "1/x" for each fraction
+            let fractionValue = 1 / redenom1;  // The numerical value of the fraction
+
+            // Iterate through fbviz elements (from fbviz1 to fbviz10)
+            let currentFbViz = 1;
+            let remainingIterations = totalIterations;
+            let remainingFraction = totalIterations * fractionValue;
+            console.log("remaining Fract" + remainingFraction);
+            console.log("remaining iter" + remainingIterations);
+
+            while (currentFbViz <= 10 && remainingIterations > 0) {
+                console.log("masuk");
+                // Get the current fbviz element
+                let fbviz = document.getElementById('fbviz' + currentFbViz);
+
+                // Get current value of the fbviz element (as a string)
+                let currentValue = fbviz.getAttribute('data-ctat-value') || '';
+                console.log("currentvalue biz" + currentValue);
+
+                // Determine how much space is left in this fbviz (since its max is 1)
+                let currentFractionSum = currentValue.split(' + ').length * fractionValue;
+                let availableSpace = 1 - currentFractionSum;
+
+                if (remainingFraction <= availableSpace) {
+                    // If remaining fraction fits in this fbviz, add it as a string
+                    for (let i = 0; i < remainingIterations; i++) {
+                        currentValue += (currentValue === '' ? '' : ' + ') + fractionStr;
+                    }
+                    fbviz.setAttribute('data-ctat-value', currentValue);
+                    remainingIterations = 0; // We're done
+                    remainingFraction = 0;
+                } else {
+                    // If not, fill this fbviz with as many fractions as possible
+                    let spaceForFractions = Math.floor(availableSpace / fractionValue);
+                    for (let i = 0; i < spaceForFractions; i++) {
+                        currentValue += (currentValue === '' ? '' : ' + ') + fractionStr;
+                    }
+                    fbviz.setAttribute('data-ctat-value', currentValue);
+                    remainingIterations -= spaceForFractions;
+                    remainingFraction -= spaceForFractions * fractionValue;
+                    currentFbViz++; // Move to the next fbviz
+                }
+            }
+
+            // After finishing the iteration, if there's still space in the last fbviz, add (0*1/x)
+            if (remainingFraction > 0 && currentFbViz <= 10) {
+                let fbviz = document.getElementById('fbviz' + currentFbViz);
+                let currentValue = fbviz.getAttribute('data-ctat-value') || '';
+
+                let remainingSlots = Math.floor((1 - currentValue.split(' + ').length * fractionValue) / fractionValue);
+                for (let i = 0; i < remainingSlots; i++) {
+                    currentValue += (currentValue === '' ? '' : ' + ') + '(0*' + fractionStr + ')';
+                }
+                fbviz.setAttribute('data-ctat-value', currentValue);
+            }
+        }

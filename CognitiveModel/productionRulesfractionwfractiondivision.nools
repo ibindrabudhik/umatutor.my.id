@@ -1,0 +1,833 @@
+import("typesfractionwfractiondivision.nools");
+
+rule Bootstrap {
+    when {
+        t: Boolean t == true from true;
+    } then {
+        // Membuat problem baru di working memory.
+        assert(new Problem(pemb1, pemb2, peny1, peny2, "enum1", "enum2", "denom1", "denom2"));
+
+        // Bangun facts pada working memory
+        // 1. Facts siswa menuliskan kembali soal
+        assert(new rewriteProblem(null, null, "pembilang1", "pembilang2", null, null, "penyebut1", "penyebut2"));
+
+        // 2. Facts siswa melakukan konversi
+        assert(new divisionConversion(null, null, "pembilangcon1", "pembilangcon2", null, null, "penyebutcon1", "penyebutcon2"));
+
+        // 3. Facts siswa melakukan perkalian
+        assert(new firstResult(null, null, "pembilanghasil1", "penyebuthasil1"));
+        
+        // 4. Facts siswa menyederhanakan perkalian
+        assert(new finalRes(null, null, "enfinal", "denfinal"));
+
+        //Fact Error Siswa
+        assert(new StudentError(0,0,0,0,0,0,0,0,0,0,0,0));
+
+
+        printFacts(Problem);
+        printFacts(finalRes);
+        
+        // Inisiasi interfacenya
+        //Soal
+        assert(new TPA("enum1", "UpdateTextField", pemb1));
+        assert(new TPA("enum2", "UpdateTextField", pemb2));
+
+        assert(new TPA("denom1", "UpdateTextField", peny1));
+        assert(new TPA("denom2", "UpdateTextField", peny2));
+
+        //Fractionbar
+        let stringfraction1 = "";
+        let stringfraction2 = "";
+
+        //String Fractionbar 1
+        for (var i = 0; i < pemb1; i++){
+            if(i > 0){
+                stringfraction1 = stringfraction1 + "+1/" + peny1;
+            } else{
+                stringfraction1 = stringfraction1 + "1/" + peny1;
+            }
+        }
+
+        for (var i = 0; i < (peny1-pemb1); i++){
+            stringfraction1 = stringfraction1 + "+(0*1/" + peny1 + ")";
+        }
+
+        //String Fractionbar 2
+        for (var i = 0; i < pemb2; i++){
+            if(i > 0){
+                stringfraction2 = stringfraction2 + "+1/" + peny2;
+            } else{
+                stringfraction2 = stringfraction2 + "1/" + peny2;
+            }
+        }
+
+        for (var i = 0; i < (peny2-pemb2); i++){
+            stringfraction2 = stringfraction2 + "+(0*1/" + peny2 + ")";
+        }
+        console.log(stringfraction1);
+        console.log(stringfraction2);
+
+        assert(new TPA("fractionbar1", "SetPieces", stringfraction1));
+        assert(new TPA("fractionbar1", "lock", ""));
+        assert(new TPA("fractionbar2", "SetPieces", stringfraction2));
+        assert(new TPA("fractionbar2", "lock", ""));
+
+        setProblemAttribute("use_backtracking", true);
+        setProblemAttribute("use_hint_fact", true);
+        halt();
+    }
+}
+
+// Rule untuk rewrite soal
+
+rule rewritePecahan1 {
+    when {
+        prb: Problem 
+        {pembilang1: pem1, penyebut1: pen1};
+
+        rp: rewriteProblem rp.depembilang1 == null || rp.depenyebut1 == null
+        {depembilang1: dpm1, depenyebut1: dpn1, depembilang1IE: depemie1, depenyebut1IE: depenie1};
+    } then {
+        solpem = pem1;
+        solpen = pen1;
+
+        //Masukkan hint 
+        let hintMessage = "Pada bagian kali ini masukkan pembilang dan penyebut pecahan pertama ya!";
+        assert(new Hint(hintMessage));
+
+
+        if(checkSAI({selection: depemie1, action: "UpdateTextField", input: solpem})){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(rp, "depembilang1", solpem);
+            halt();
+        } else if (checkSAI({selection: depenie1, action: "UpdateTextField", input: solpen})){
+            setSuccessOrBugMsg("<html>Yay, kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(rp, "depenyebut1", solpen);
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+rule rewritePecahan2 {
+    when {
+        prb: Problem 
+        {pembilang2: pem2, penyebut2: pen2};
+
+        rp: rewriteProblem rp.depembilang2 == null || rp.depenyebut2 == null
+        {depembilang2: dpm2, depenyebut2: dpn2, depembilang2IE: depemie2, depenyebut2IE: depenie2};
+    } then {
+        solpem = pem2;
+        solpen = pen2;
+
+        //Masukkan hint 
+        let hintMessage = "Pada bagian kali ini masukkan pembilang dan penyebut pecahan kedua ya!";
+        assert(new Hint(hintMessage));
+
+        if(checkSAI({selection: depemie2, action: "UpdateTextField", input: solpem})){
+            setSuccessOrBugMsg("<html>Hebat, kamu benar! Ayo isi lagi bagian yang masih kosong!</html>");
+            modify(rp, "depembilang2", solpem);
+            halt();
+        } else if (checkSAI({selection: depenie2, action: "UpdateTextField", input: solpen})){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Ayo isi lagi bagian yang masih kosong!</html>");
+            modify(rp, "depenyebut2", solpen);
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+// Buggy rule untuk rewrite
+rule buggyRewritePecahan1e0 {
+    salience: -2;
+    when{
+        se: StudentError se.errorPembilang1 == 0 || se.errorPenyebut1 == 0
+        {errorPembilang1: epm1, errorPenyebut1: epn1};
+
+        prb: Problem 
+        {pembilang1: pem1, penyebut1: pen1};
+
+        rp: rewriteProblem rp.depembilang1 == null || rp.depenyebut1 == null
+        {depembilang1: dpm1, depenyebut1: dpn1, depembilang1IE: depemie1, depenyebut1IE: depenie1};
+    } then {
+        if(checkSAI({selection: depemie1, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorPembilang1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+            halt();
+        } else if (checkSAI({selection: depenie1, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            modify(se, "errorPenyebut1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+rule buggyRewritePecahan1e1 {
+    salience: -1;
+    when{
+        se: StudentError se.errorPembilang1 == 1 || se.errorPenyebut1 == 1
+        {errorPembilang1: epm1, errorPenyebut1: epn1};
+
+        prb: Problem 
+        {pembilang1: pem1, penyebut1: pen1};
+
+        rp: rewriteProblem rp.depembilang1 == null || rp.depenyebut1 == null
+        {depembilang1: dpm1, depenyebut1: dpn1, depembilang1IE: depemie1, depenyebut1IE: depenie1};
+    } then {
+        let solpem1 = pem1;
+        let solpen1 = pen1;
+        if(checkSAI({selection: depemie1, action: "UpdateTextField", input: "don't_care"}, null, true) && epm1 == 1){
+            modify(se, "errorPembilang1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem1 +"</b> pada pembilang pecahan di sebelah kiri!</html>");
+            halt();
+        } else if (checkSAI({selection: depenie1, action: "UpdateTextField", input: "don't_care"}, null, true) && epn1 == 1) {
+            modify(se, "errorPenyebut1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen1 +"</b> pada penyebut pecahan di sebelah kiri!</html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+rule buggyRewritePecahan2e0 {
+    salience: -2;
+    when{
+        se: StudentError se.errorPembilang2 == 0 || se.errorPenyebut2 == 0
+        {errorPembilang2: epm2, errorPenyebut2: epn2};
+
+        prb: Problem 
+        {pembilang2: pem2, penyebut2: pen2};
+
+        rp: rewriteProblem rp.depembilang2 == null || rp.depenyebut2 == null
+        {depembilang2: dpm2, depenyebut2: dpn2, depembilang2IE: depemie2, depenyebut2IE: depenie2};
+    } then {
+        if(checkSAI({selection: depemie2, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorPembilang2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+            halt();
+        } else if (checkSAI({selection: depenie2, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            modify(se, "errorPenyebut2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+rule buggyRewritePecahan2e1 {
+    salience: -1;
+    when{
+        se: StudentError se.errorPembilang2 == 1 || se.errorPenyebut2 == 1
+        {errorPembilang2: epm2, errorPenyebut2: epn2};
+
+        prb: Problem 
+        {pembilang2: pem2, penyebut2: pen2};
+
+        rp: rewriteProblem rp.depembilang2 == null || rp.depenyebut2 == null
+        {depembilang2: dpm2, depenyebut1: dpn2, depembilang2IE: depemie2, depenyebut2IE: depenie2};
+    } then {
+        let solpem2 = pem2;
+        let solpen2 = pen2;
+        if(checkSAI({selection: depemie2, action: "UpdateTextField", input: "don't_care"}, null, true) && epm2 == 1){
+            modify(se, "errorPembilang2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem2 +"</b> pada pembilang pecahan di sebelah kiri!</html>");
+            halt();
+        } else if (checkSAI({selection: depenie2, action: "UpdateTextField", input: "don't_care"}, null, true) && epn2 == 1) {
+            modify(se, "errorPenyebut2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen2 +"</b> pada penyebut pecahan di sebelah kiri!</html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+// Rule untuk konversi
+rule konversiPecahan1 {
+    when {
+        prb: Problem 
+        {pembilang1: pem1, penyebut1: pen1};
+
+        dc: divisionConversion dc.doneConversion != true && (dc.conpembilang1 == null || dc.conpenyebut1 == null)
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang1IE: cpmie1, conpenyebut1IE: cpnie1, conpembilang2: cpm2, conpenyebut2: cpn2, conpembilang2IE: cpmie2, conpenyebut2IE: cpnie2};
+    } then {
+        solpem = pem1;
+        solpen = pen1;
+
+        //Masukkan hint 
+        let hintMessage = "Pada bagian kali ini masukkan kamu bisa memasukkan kembali nilai pecahan pertama ya!";
+        assert(new Hint(hintMessage));
+
+        if(checkSAI({selection: cpmie1, action: "UpdateTextField", input: solpem}) && cpm2 != null && cpn1 != null && cpn2 != null){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Berikutnya ayo kita hitung hasil perkalian pecahan ini!</html>");
+            modify(dc, "conpembilang1", solpem);
+            halt();
+        } else if (checkSAI({selection: cpnie1, action: "UpdateTextField", input: solpen}) && cpm1 != null && cpm2 != null && cpn2 != null){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Berikutnya ayo kita hitung hasil perkalian pecahan ini!</html>");
+            modify(dc, "conpenyebut1", solpen);
+            halt();
+        } else if (checkSAI({selection: cpmie1, action: "UpdateTextField", input: solpem})){
+            setSuccessOrBugMsg("<html>Hebat, kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(dc, "conpembilang1", solpem);
+            halt();
+        } else if (checkSAI({selection: cpnie1, action: "UpdateTextField", input: solpen})){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(dc, "conpenyebut1", solpen);
+            halt();
+        }else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+rule konversiPecahan2 {
+    when {
+        prb: Problem 
+        {pembilang2: pem2, penyebut2: pen2};
+
+        dc: divisionConversion dc.doneConversion != true && (dc.conpembilang2 == null || dc.conpenyebut2 == null)
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang1IE: cpmie1, conpenyebut1IE: cpnie1, conpembilang2: cpm2, conpenyebut2: cpn2, conpembilang2IE: cpmie2, conpenyebut2IE: cpnie2};
+    } then {
+        solpem = pem2;
+        solpen = pen2;
+
+        //Masukkan hint untuk konversi
+        let hintMessage = "Pada bagian kali ini silahkan masukkan nilai pecahan yang telah diubah dari bentuk pembagian menjadi bentuk perkalian";
+        assert(new Hint(hintMessage));
+        
+
+        if(checkSAI({selection: cpnie2, action: "UpdateTextField", input: solpem}) && cpm1 != null && cpn1 != null && cpm2 != null){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Berikutnya ayo kita hitung hasil perkalian pecahan ini!</html>");
+            modify(dc, "conpenyebut2", solpem);
+            modify(dc, "doneConversion", true);
+            halt();
+        } else if (checkSAI({selection: cpmie2, action: "UpdateTextField", input: solpen}) && cpm1 != null && cpn1 != null && cpn2 != null){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Berikutnya ayo kita hitung hasil perkalian pecahan ini!</html>");
+            modify(dc, "conpembilang2", solpen);
+            modify(dc, "doneConversion", true);
+            halt();
+        } else if (checkSAI({selection: cpnie2, action: "UpdateTextField", input: solpem})){
+            setSuccessOrBugMsg("<html>Keren, kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(dc, "conpenyebut2", solpem);
+            halt();
+        } else if (checkSAI({selection: cpmie2, action: "UpdateTextField", input: solpen})){
+            setSuccessOrBugMsg("<html>Hebat, kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(dc, "conpembilang2", solpen);
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+// Rule untuk buggy dari konversi pecahan
+rule buggykonversiPecahan1e0 {
+    salience: -2;
+    when {
+        se: StudentError se.errorConPembilang1 == 0 || se.errorConPenyebut1 == 0
+        {errorConPembilang1: ecpm1, errorConPenyebut1: ecpn1};
+
+        prb: Problem 
+        {pembilang1: pem1, penyebut1: pen1};
+
+        dc: divisionConversion dc.doneConversion != true && (dc.conpembilang1 == null || dc.conpenyebut1 == null)
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang1IE: cpmie1, conpenyebut1IE: cpnie1, conpembilang2: cpm2, conpenyebut2: cpn2, conpembilang2IE: cpmie2, conpenyebut2IE: cpnie2};
+    } then {
+        solpem = pem1;
+        solpen = pen1;
+
+         if(checkSAI({selection: cpmie1, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorConPembilang1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk perkalian menjadi pecahan, pecahan pertama nilainya tidak berubah!</html>");
+            halt();
+        } else if (checkSAI({selection: cpnie1, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            modify(se, "errorConPenyebut1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk perkalian menjadi pecahan, pecahan pertama nilainya tidak berubah!</html>");
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+rule buggykonversiPecahan2e0 {
+    salience: -2;
+    when {
+        se: StudentError se.errorConPembilang2 == 0 || se.errorConPenyebut2 == 0
+        {errorConPembilang2: ecpm2, errorConPenyebut2: ecpn2};
+
+        prb: Problem 
+        {pembilang2: pem2, penyebut2: pen2};
+
+        dc: divisionConversion dc.doneConversion != true && (dc.conpembilang2 == null || dc.conpenyebut2 == null)
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang1IE: cpmie1, conpenyebut1IE: cpnie1, conpembilang2: cpm2, conpenyebut2: cpn2, conpembilang2IE: cpmie2, conpenyebut2IE: cpnie2};
+    } then {
+        solpem = pem2;
+        solpen = pen2;
+
+        if(checkSAI({selection: cpmie2, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorConPembilang2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
+            halt();
+        } else if (checkSAI({selection: cpnie2, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            modify(se, "errorConPenyebut2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+
+rule buggykonversiPecahan1e1 {
+    salience: -1;
+    when {
+        se: StudentError se.errorConPembilang1 == 1 || se.errorConPenyebut1 == 1
+        {errorConPembilang1: ecpm1, errorConPenyebut1: ecpn1};
+
+        prb: Problem 
+        {pembilang1: pem1, penyebut1: pen1};
+
+        dc: divisionConversion dc.doneConversion != true && (dc.conpembilang1 == null || dc.conpenyebut1 == null)
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang1IE: cpmie1, conpenyebut1IE: cpnie1, conpembilang2: cpm2, conpenyebut2: cpn2, conpembilang2IE: cpmie2, conpenyebut2IE: cpnie2};
+    } then {
+        solpem = pem1;
+        solpen = pen1;
+
+        if(checkSAI({selection: cpmie1, action: "UpdateTextField", input: "don't_care"}, null, true) && ecpm1 == 1){
+            modify(se, "errorConPembilang1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen +"</b> pada pembilang pecahan di sebelah kiri!</html>");
+            halt();
+        } else if (checkSAI({selection: cpnie1, action: "UpdateTextField", input: "don't_care"}, null, true) && ecpn1 == 1) {
+            modify(se, "errorConPenyebut1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem +"</b> pada penyebut pecahan di sebelah kiri!</html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+rule buggykonversiPecahan2e1 {
+    salience: -1;
+    when {
+        se: StudentError se.errorConPembilang2 == 1 || se.errorConPenyebut2 == 1
+        {errorConPembilang2: ecpm2, errorConPenyebut2: ecpn2};
+
+        prb: Problem 
+        {pembilang2: pem2, penyebut2: pen2};
+
+        dc: divisionConversion dc.doneConversion != true && (dc.conpembilang2 == null || dc.conpenyebut2 == null)
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang1IE: cpmie1, conpenyebut1IE: cpnie1, conpembilang2: cpm2, conpenyebut2: cpn2, conpembilang2IE: cpmie2, conpenyebut2IE: cpnie2};
+    } then {
+        solpem = pen2;
+        solpen = pem2;
+
+         if(checkSAI({selection: cpmie2, action: "UpdateTextField", input: "don't_care"}, null, true) && ecpm2 == 1){
+            modify(se, "errorConPembilang2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem +"</b> pada pembilang pecahan di sebelah kanan!</html>");
+            halt();
+        } else if (checkSAI({selection: cpnie2, action: "UpdateTextField", input: "don't_care"}, null, true) && ecpn2 == 1) {
+            modify(se, "errorConPenyebut2", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen +"</b> pada penyebut pecahan di sebelah kanan!</html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+
+// Rule untuk hasil
+rule firstResult{
+    when{
+        dc: divisionConversion dc.doneConversion == true 
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang2: cpm2, conpenyebut2: cpn2};
+
+        fr : firstResult fr.donefirstResult != true && (fr.repembilang == null || fr.repenyebut == null)
+        {repembilang: rpm, repenyebut: rpn, repemIE: rpmie, repenIE: rpnie};
+
+    } then {
+        solpem = cpm1 * cpm2;
+        solpen = cpn1 * cpn2;
+
+        let hintMessage = "Pada bagian kali ini silahkan masukkan hasil perkalian pecahan yang <b>belum</b> disederhanakan";
+        assert(new Hint(hintMessage));
+        hintMessage = "Kamu bisa menggunakan visualisasi berupa dua tabel yang telah diwarnai untuk melihat jumlah kotak yang diberi warna untuk pembilang (tabel kiri) dan untuk penyebut (tabel kanan)";
+        assert(new Hint(hintMessage));
+
+        if(checkSAI({selection: rpmie, action: "UpdateTextField", input: solpem}) && rpn != null){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Sekarang ayo kita sederhanakan pecahannya!</html>");
+            modify(fr, "repembilang", solpem);
+            modify(fr, "donefirstResult", true);
+            halt();
+        } else if(checkSAI({selection: rpnie, action: "UpdateTextField", input: solpen}) && rpm != null){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Sekarang ayo kita sederhanakan pecahannya!</html>");
+            modify(fr, "repenyebut", solpen);
+            modify(fr, "donefirstResult", true);
+            halt();
+        } else if(checkSAI({selection: rpmie, action: "UpdateTextField", input: solpem})){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Sekarang ayo hitung hasil perkalian penyebut!</html>");
+            modify(fr, "repembilang", solpem);
+            halt();
+        } else if(checkSAI({selection: rpnie, action: "UpdateTextField", input: solpen})){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Sekarang ayo hitung hasil perkalian pembilang!</html>");
+            modify(fr, "repenyebut", solpen);
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");        
+    }
+}
+
+//Buggy untuk hasil sebelum disederhanakan
+rule buggyFirstResult0{
+    salience: -2;
+    when{
+        se: StudentError se.errorResPembilang == 0 || se.errorResPenyebut == 0
+        {errorResPembilang: erpm1, errorResPenyebut: erpn1};
+
+        dc: divisionConversion dc.doneConversion == true 
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang2: cpm2, conpenyebut2: cpn2};
+
+        fr : firstResult fr.donefirstResult != true && (fr.repembilang == null || fr.repenyebut == null)
+        {repembilang: rpm, repenyebut: rpn, repemIE: rpmie, repenIE: rpnie};
+    } then {
+        let finalpem = 0;
+        let finalpen = 0;
+        let repem = cpm1 * cpm2;
+        let rpnb = cpn1 * cpn2;
+
+        console.log("finpem: " + finalpem);
+        console.log("finpen: " + finalpen);
+        console.log("repem: " + repem);
+
+        let hintMessage = "Pada bagian kali ini silahkan masukkan hasil pecahan yang belum disederhanakan";
+        assert(new Hint(hintMessage));
+
+        // Kalau pembilang == 1, otomatis tidak ada lagi penyederhanaan, set pembilang dan penyebut sama seperti hasil sebelumnya
+        if(finalpem == 0 && finalpen == 0 && repem == 1){
+            finalpem = repem;
+            finalpen = rpnb;
+        } else {
+            // Kalau bukan coba cari faktor pembilangnya untuk mendapatkan nilai paling sederhana
+            for (var i = 2; i <= repem; i++){
+                if(rpnb % i == 0 && repem % i == 0){
+                    finalpem = repem / i;
+                    finalpen = rpnb / i;
+                }
+            }
+
+            // Kalau tidak ketemu, otomatis tidak ada penyederhanaan juga.
+            if(finalpem == 0 && finalpen == 0){
+                finalpem = repem;
+                finalpen = rpnb;
+            }
+        }
+
+        if(checkSAI({selection: rpmie, action: "UpdateTextField", input: finalpem}, null, true)){
+            modify(se, "errorResPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu sudah dalam bentuk sederhana! Masukkan hasil perkalian yang belum disederhanakan</html>");
+            halt();
+        } else if (checkSAI({selection: rpnie, action: "UpdateTextField", input: finalpen}, null, true)) {
+            modify(se, "errorResPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu sudah dalam bentuk sederhana! Masukkan hasil perkalian yang belum disederhanakan</html>");
+            halt();
+        }else if(checkSAI({selection: rpmie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorResPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Lakukan operasi perkalian pada pembilang pertama dan pembilang kedua dari kedua pecahan yang telah diubah ke dalam bentuk perkalian pecahan!</html>");
+            halt();
+        } else if (checkSAI({selection: rpnie, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            modify(se, "errorResPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Lakukan operasi perkalian pada pembilang pertama dan pembilang kedua dari kedua pecahan yang telah diubah ke dalam bentuk perkalian pecahan!</html>");
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");   
+    }
+}
+
+rule buggyFirstResult1{
+    salience: -1;
+    when{
+        se: StudentError se.errorResPembilang == 1 || se.errorResPenyebut == 1
+        {errorResPembilang: erpm1, errorResPenyebut: erpn1};
+
+        dc: divisionConversion dc.doneConversion == true 
+        {conpembilang1: cpm1, conpenyebut1: cpn1, conpembilang2: cpm2, conpenyebut2: cpn2};
+
+        fr : firstResult fr.donefirstResult != true && (fr.repembilang == null || fr.repenyebut == null)
+        {repembilang: rpm, repenyebut: rpn, repemIE: rpmie, repenIE: rpnie};
+    } then {
+        solpem = cpm1 * cpm2;
+        solpen = cpn1 * cpn2;
+
+        if(checkSAI({selection: rpmie, action: "UpdateTextField", input: "don't_care"}, null, true) && erpm1 == 1){
+            modify(se, "errorResPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem +"</b> pada pembilang pecahan!</html>");
+            halt();
+        } else if (checkSAI({selection: rpnie, action: "UpdateTextField", input: "don't_care"}, null, true) && erpn1 == 1) {
+            modify(se, "errorResPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen +"</b> pada penyebut pecahan!</html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Lakukan operasi perkalian pada pembilang pertama dan pembilang kedua dari kedua pecahan yang telah diubah ke dalam bentuk perkalian pecahan!</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");   
+    }
+}
+
+// Rule untuk penyederhanaan
+rule simplifiedFinal{
+    when {
+        // Hanya bisa dilakukan apabila task sebelumnya telah selesai
+        prb: Problem
+        {done: dn};
+
+        fir: firstResult fir.donefirstResult == true && fir.repembilang != null && fir.repenyebut != null
+        {repembilang: rpm, repenyebut: rpn, repemIE: rpmie, repenIE: rpnie};
+
+        // Ambil fact tentang hasil akhir
+        fr: finalRes fr.simpembilang == null || fr.simpenyebut == null
+        {simpembilang: pem, simpenyebut: peny, simpenIE: penie,simpemIE: pemie};
+    } then {
+        let finalpem = 0;
+        let finalpen = 0;
+        let repem = rpm;
+
+        console.log("finpem: " + finalpem);
+        console.log("finpen: " + finalpen);
+        console.log("repem: " + repem);
+
+        let hintMessage = "Pada bagian kali ini silahkan masukkan hasil pecahan yang disederhanakan";
+        assert(new Hint(hintMessage));
+
+        hintMessage = "Coba pikirkan, apakah pembilang dan penyebut bisa dibagi angka yang sama? Mulailah dengan angka kecil seperti 2, 3, atau 5. Angka apa yang bisa membagi kedua angka ini tanpa sisa?";
+        assert(new Hint(hintMessage));
+
+        // Kalau pembilang == 1, otomatis tidak ada lagi penyederhanaan, set pembilang dan penyebut sama seperti hasil sebelumnya
+        if(finalpem == 0 && finalpen == 0 && rpm == 1){
+            finalpem = rpm;
+            finalpen = rpn;
+        } else {
+            // Kalau bukan coba cari faktor pembilangnya untuk mendapatkan nilai paling sederhana
+            for (var i = 2; i <= rpm; i++){
+                if(rpn % i == 0 && rpm % i == 0){
+                    finalpem = rpm / i;
+                    finalpen = rpn / i;
+                }
+            }
+
+            // Kalau tidak ketemu, otomatis tidak ada penyederhanaan juga.
+            if(finalpem == 0 && finalpen == 0){
+                finalpem = rpm;
+                finalpen = rpn;
+            }
+        }
+
+        if(checkSAI({selection:penie, action:"UpdateTextField",input: finalpen}) && fr.simpembilang != null){
+            modify(fr, "simpenyebut", finalpen);
+            modify(prb, "done", true);
+            setSuccessOrBugMsg("<html>Keren kamu benar! Klik tombol done untuk menyelesaikan soal ini!</html>");
+            halt();
+        } else if(checkSAI({selection:pemie, action:"UpdateTextField",input: finalpem}) && fr.simpenyebut != null){
+            modify(fr, "simpembilang", finalpem);
+            modify(prb, "done", true);
+            setSuccessOrBugMsg("<html>Keren kamu benar! Klik tombol done untuk menyelesaikan soal ini!</html>");
+            halt();
+        } else if(checkSAI({selection:pemie, action:"UpdateTextField",input: finalpem})){
+            modify(fr, "simpembilang", finalpem);
+            setSuccessOrBugMsg("<html>Kamu benar! Ayo isi yang masih tersisa, sedikit lagi! Kamu pasti bisa!</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: finalpen})){
+            modify(fr, "simpenyebut", finalpen);
+            setSuccessOrBugMsg("<html>Kamu benar! Ayo isi yang masih tersisa, sedikit lagi! Kamu pasti bisa!</html>");
+            halt();
+        }else {
+            backtrack();
+        }
+
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+// Buggyrule untuk Simplified
+rule buggySimplifiedFinal0 {
+    salience: -2;
+    when {
+        se: StudentError
+        {errorSimplifiedPembilang: espm1, errorSimplifiedPenyebut: espn1};
+
+        fir: firstResult fir.donefirstResult == true && fir.repembilang != null && fir.repenyebut != null
+        {repembilang: rpm, repenyebut: rpn, repemIE: rpmie, repenIE: rpnie};
+
+        // Ambil fact tentang hasil akhir
+        fr: finalRes fr.simpembilang == null || fr.simpenyebut == null
+        {simpembilang: pem, simpenyebut: peny, simpenIE: penie,simpemIE: pemie};
+
+    } then {
+        let finalpem = 0;
+        let finalpen = 0;
+        let repem = rpm;
+        let bugpem = 0;
+        let bugpen = 0;
+
+        if(finalpem == 0 && finalpen == 0 && repem == 1){
+            finalpem = rpm;
+            finalpen = rpn;
+        } else {
+            for (var i = 2; i <= rpm; i++){
+                if(rpn % i == 0 && rpm % i == 0){
+                    finalpem = rpm / i;
+                    finalpen = rpn / i;
+                }
+            }
+
+            if(finalpem == 0 && finalpen == 0){
+                finalpem = rpm;
+                finalpen = rpn;
+            } else{
+                bugpem = finalpem * 2;
+                bugpen = finalpen * 2;
+            }
+        }
+        console.log("finpem: " + finalpem);
+        console.log("finpen: " + finalpen);
+        console.log("repem: " + repem);
+        console.log("bugpem: " + bugpem);
+
+        if(checkSAI({selection:pemie, action:"UpdateTextField",input: bugpem}, null, true) && bugpem == 0){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Nilai <b>" + bugpem + " </b> bukanlah jawaban sederhana ya</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: bugpen}, null, true) && bugpen == 0){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Nilai <b>" + bugpen + " </b> bukanlah jawaban sederhana ya</html>");
+            halt();
+        } else if(checkSAI({selection:pemie, action:"UpdateTextField",input: bugpem}, null, true)){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Nilai <b>" + bugpem + " </b> masih bisa disederhanakan lagi ya</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: bugpen}, null, true)){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Nilai <b>" + bugpen + " </b> masih bisa disederhanakan lagi ya</html>");
+            halt();
+        } else if(checkSAI({selection:pemie, action:"UpdateTextField",input: "don't_care"}, null, true)){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang dapat membagi pecahan tersebut</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: "don't_care"}, null, true)){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang dapat membagi pecahan tersebut</html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang dapat membagi pecahan tersebut</html>");
+            backtrack();
+        }
+
+    }
+}
+
+rule buggySimplifiedFinal1 {
+    salience: -1;
+    when {
+        se: StudentError se.errorSimplifiedPembilang == 1 || se.errorSimplifiedPenyebut == 1
+        {errorSimplifiedPembilang: espm1, errorSimplifiedPenyebut: espn1};
+
+        fir: firstResult fir.donefirstResult == true && fir.repembilang != null && fir.repenyebut != null
+        {repembilang: rpm, repenyebut: rpn, repemIE: rpmie, repenIE: rpnie};
+
+        // Ambil fact tentang hasil akhir
+        fr: finalRes fr.simpembilang == null || fr.simpenyebut == null
+        {simpembilang: pem, simpenyebut: peny, simpenIE: penie,simpemIE: pemie};
+    } then {
+        let finalpem = 0;
+        let finalpen = 0;
+        let repem = rpm;
+        let bugpem = 0;
+        let bugpen = 0;
+
+        if(finalpem == 0 && finalpen == 0 && repem == 1){
+            finalpem = rpm;
+            finalpen = rpn;
+        } else {
+            for (var i = 2; i <= rpm; i++){
+                if(rpn % i == 0 && rpm % i == 0){
+                    finalpem = rpm / i;
+                    finalpen = rpn / i;
+                }
+            }
+
+            if(finalpem == 0 && finalpen == 0){
+                finalpem = rpm;
+                finalpen = rpn;
+            } else{
+                bugpem = finalpem * 2;
+                bugpen = finalpen * 2;
+            }
+        }
+        console.log("finpem: " + finalpem);
+        console.log("finpen: " + finalpen);
+        console.log("repem: " + repem);
+        console.log("bugpem: " + bugpem);
+
+        if(checkSAI({selection:pemie, action:"UpdateTextField",input: "don't_care"}, null, true) && espm1 == 1){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Masukkan nilai <b>" + finalpem + "</b> </html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: "don't_care"}, null, true) && espn1 == 1){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Masukkan nilai <b>" + finalpen + "</b> </html>");
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang dapat membagi pecahan tersebut</html>");
+            backtrack();
+        }
+    }
+}
+
+
+// DoneRule
+rule DoneRule {
+    when {
+        // Priksa kalau semua komponen sudah terisi
+        prb : Problem prb.done == true;
+    }
+    then {
+        let hintMessage = "Klik tombol 'Done' untuk menyelesaikan problem ini";
+        assert(new Hint(hintMessage));
+
+        
+        if (checkSAI({selection: "done", action: "ButtonPressed", input: "don't_care"})) {
+            halt(); 
+        } else {
+            backtrack(); 
+        }
+    }
+}

@@ -1,0 +1,9 @@
+import("productionRulesintegerwfractiondivision.nools");
+//Define Problem Set
+
+// wholenum
+global wholenumSoal = Math.floor(Math.random() * 9) + 2;
+
+// Fraction 2
+global peny1 = Math.floor(Math.random() * 9) + 2; 
+global pemb1 = Math.floor(Math.random() * (peny1 - 1)) + 1;

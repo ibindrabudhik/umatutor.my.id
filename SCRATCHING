@@ -1,0 +1,146 @@
+rule enterTableSolution {
+    when{
+        // Cocokkan terlebih dahulu fakta Bottom Up yang belum diselesaikan oleh siswa
+        bu : BottomUp bu.solution == null 
+        {column: colmn, beforeValue: onebv, twoBeforeValue: twobv, currentSolutionIE: cell, currentCoin: curc};
+        // Ambil nilai koin-koin yang akan digunakan yes
+        prob : Problem {coins: coinz};
+    } then {
+        // Fungsi solusi tabel
+        let sol = Math.max(onebv, curc + twobv);
+
+        // Buat pesan hint untuk memasukkan nilai 
+        let hintMessage = "Masukkan " + sol + " pada kolom ke " + colmn + ".";
+        assert(new Hint(hintMessage));
+
+        // Periksa apakah solusinya sama dengan atau lebih, kalau ya berarti jawaban udah bener
+        let isSol = (sol >= onebv);
+
+        // Periksa input
+        if(checkSAI({selection: cell, action: "UpdateTextField", input: sol.toString()})){
+            modify(bu, "solution", sol); //Update fact bottomup yang ada
+            halt();
+        }
+
+    }
+}
+
+when {
+        // Match a Multiple fact where the multiple has not been calculated yet
+        m : Multiple m.multiple == null
+            {number: n, multiplier: mult, multipleIE: sel};
+        // Retrieve the two numbers for which we are finding the LCM
+        p : Problem {num1: n1, num2: n2};
+    }
+
+ // Perform the observable action
+ if (checkSAI({selection: sel, action: "UpdateTextField", input: multipleValue.toString()})) {
+    // Update the Multiple fact with the calculated multiple
+    modify(m, "multiple", multipleValue);
+    // If it's a common multiple, mark it as such
+    if (isCommon) {
+        modify(m, "commonp", true);
+    }
+
+    halt(); // Await next student action
+} else {
+    backtrack(); // Undo any changes and search further
+}
+
+
+import("types.nools");
+
+rule Bootstrap {
+    when {
+        t: Boolean t == true from true;
+    } then {
+        // Membuat problem baru di working memory.
+        assert(new Problem(coins,fi,ci,headers,null,null));
+
+        // Buat facts pada working memory BottomUp mulai dari indeks 0 sampai indeks 6
+        // BottomUp(colmn, cc, bv, tbv, ccie, bvie, tbvie, csie)
+		for (var i = 0; i <= 6; i++) {
+			//Kalau masih koin pertama, max adalah koinnya sendiri, beforeValue dan twoBeforeValue nya tidak ada (0)
+            if (i == 0) {
+                assert(new BottomUp(0, 0, 0, 0, "coinRowTab.R1C1", null, null, "coinRowTab.R2C1")); //gaada interface untuk bvie dan tbvie.
+                // console.log("Zero success");
+            } else if (i == 1){
+                assert(new BottomUp(i, coins[i-1], 0, 0, "coinRowTab.R1C2", "coinRowTab.R1C"+i, null, "coinRowTab.R2C2")); //gaada interface untuk tbvie.
+                // console.log("One success");
+            } else if (i == 2){
+                assert(new BottomUp(i, coins[i-1], coins[i-2], 0, "coinRowTab.R1C3", "coinRowTab.R1C"+i, "coinRowTab.R1C"+(i-1),"coinRowTab.R2C"+(i+1)));
+                // console.log("two success");
+                
+            } else {
+                assert(new BottomUp(i, coins[i-1], null, null, "coinRowTab.R1C"+(i+1), "coinRowTab.R1C"+i, "coinRowTab.R1C"+(i-1),"coinRowTab.R2C"+(i+1)));
+                // console.log("success");
+            }	
+		}
+        printFacts(BottomUp);
+        printFacts(Problem);
+        
+        // Inisiasi interfacenya
+        // COLUMN 0 
+        assert(new TPA("coinRowTab.R0C0", "UpdateTextField","i"));
+        assert(new TPA("coinRowTab.R1C0", "UpdateTextField",fi));
+        assert(new TPA("coinRowTab.R2C0", "UpdateTextField",ci));
+
+        // COLUMN 1
+        assert(new TPA("coinRowTab.R0C1", "UpdateTextField",headers[0]));
+        assert(new TPA("coinRowTab.R1C1", "UpdateTextField","-"));
+        
+        //COLUMN 2 - 7
+        for (i = 2; i <= 7; i++){
+            assert(new TPA("coinRowTab.R0C"+i, "UpdateTextField",headers[i-1]));
+            assert(new TPA("coinRowTab.R1C"+i, "UpdateTextField",coins[i-2]));
+        }
+
+        setProblemAttribute("search_all_permutations", true);
+        halt();
+    }
+}
+
+rule enterTableSolution {
+    when{
+        // Cocokkan terlebih dahulu fakta Bottom Up yang belum diselesaikan oleh siswa
+        bu : BottomUp bu.solution == null 
+        {column: colmn, currentCoin: curc, beforeValue: onebv, twoBeforeValue: twobv, beforeValueIE: bie, twoBeforeValueIE: tie, currentSolutionIE: cell};
+
+        // Ambil nilai koin-koin yang akan digunakan yes
+        prob : Problem {coins: coinz};
+    } then {
+        // Fungsi solusi tabel
+        // Check dulu apakah onebv dan two bv ada
+            // Kalau gaada, ambil nilainya.
+            // Tentukan nilai solusi
+            // Periksa apakah nilai solusi >= sebelumnya
+                // kalau ya, solusi benar
+                // kalau salah, solusinya masih salah
+            // bikin pesant hint untuk suruh siswa masukin nilainya
+        // Kalau misalkan ternyata siswa sudah masukkan input, update factnya
+        if(onebv != null && twobv != null){
+            let sol = 0;
+            onebv = modify(bu, "twoBeforeValue", document.getElementById(bie).innerHTML);
+            twobv = modify(bu, "beforeValue", document.getElementById(tie).innerHTML);
+
+            // Periksa apakah solusinya sama dengan atau lebih, kalau ya berarti jawaban udah bener
+            if(Math.max(onebv, curc + twobv) >= onebv){
+                sol = Math.max(onebv, curc + twobv);
+            }
+
+            // Buat pesan hint untuk memasukkan nilai 
+            let hintMessage = "Masukkan " + sol + " pada kolom ke " + colmn + ".";
+            assert(new Hint(hintMessage));
+        }
+
+        // Periksa input
+        if(checkSAI({selection: cell, action: "UpdateTextField", input: sol.toString()})){
+            modify(bu, "solution", sol); //Update fact bottomup yang ada
+        }
+    }
+}
+
+
+"<textarea id="ctatdiv53" 
+contenteditable="false" 
+autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" tabindex="1" disabled=""></textarea>"

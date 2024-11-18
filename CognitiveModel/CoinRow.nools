@@ -1,0 +1,17 @@
+import("productionRulesCoinRow.nools");
+//Definisikan variabel global
+//Fungsi dan koin
+global fi = "F(i)";
+global ci = "C(i)";
+//Headers
+global headers = [0,1,2,3,4,5,6];
+//Coins
+// global coins = [5,1,2,10,6,2];
+global coin1 = Math.floor(Math.random() * 11) + 1;
+global coin2 = Math.floor(Math.random() * 11) + 1;
+global coin3 = Math.floor(Math.random() * 11) + 1;
+global coin4 = Math.floor(Math.random() * 11) + 1;
+global coin5 = Math.floor(Math.random() * 11) + 1;
+global coin6 = Math.floor(Math.random() * 11) + 1;
+global coins = [coin1,coin2,coin3,coin4,coin5,coin6];
+global coinsolutions = [0,1];

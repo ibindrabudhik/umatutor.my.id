@@ -1,0 +1,148 @@
+// Definisikan working memory soal
+define Problem{
+    // fraction sebelah kiri ditandai dengan 1
+    // fraction sebelah kanan ditandai dengan 2
+    pembilang1: null,
+    penyebut1: null,
+    pembilang2: null,
+    penyebut2: null,
+    pembilang1IE: null,
+    penyebut1IE: null,
+    pembilang2IE: null,
+    penyebut2IE: null,
+    done: false,
+    constructor: function(en1, en2, den1, den2, enie1, enie2, denie1, denie2){
+        this.pembilang1 = en1;
+        this.penyebut1 = den1;
+        this.pembilang1IE = enie1;
+        this.penyebut1IE = denie1;
+        this.pembilang2 = en2;
+        this.penyebut2 = den2;
+        this.pembilang2IE = enie2;
+        this.penyebut2IE = denie2;
+    }
+}
+
+define StudentError{
+    //Error student ada:
+    //1. Untuk enter pembilang (ada 2)
+    //2. Untuk enter penyebut (ada 2)
+    //3. Untuk enter results (ada penyebut dan pembilang)
+    //4. Untuk enter hasil sederhana (ada penyebut dan pembilang)
+    errorPembilang1: null,
+    errorPembilang2: null,
+    errorPenyebut1: null,
+    errorPenyebut2: null,
+    errorResPembilang: null,
+    errorResPenyebut: null,
+    errorSimplifiedPembilang: null,
+    errorSimplifiedPenyebut: null,
+    
+    constructor: function(erpm1, erpm2, erpn1, erpn2, rpm, rpn, spm, spn){
+      this.errorPembilang1 = erpm1;
+      this.errorPembilang2 = erpm2;
+      this.errorPenyebut1 = erpn1;
+      this.errorPenyebut2 = erpn2;
+      this.errorResPembilang = rpm;
+      this.errorResPenyebut = rpn;
+      this.errorSimplifiedPembilang = spm;
+      this.errorSimplifiedPenyebut = spn;
+    }
+}
+
+define multiplicationResult {
+    // fraction sebelah kiri ditandai dengan 1
+    // fraction sebelah kanan ditandai dengan 2
+
+    //pembilang fraction 1 dan 2
+    depembilang1: null,
+    depembilang2: null,
+    depembilang1IE: null,
+    depembilang2IE: null,
+
+    //penyebut fraction 1 dan 2
+    depenyebut1: null,
+    depenyebut2: null,
+    depenyebut1IE: null,
+    depenyebut2IE: null,
+
+    //results
+    repembilang: null,
+    repenyebut: null,
+    repemIE: null,
+    repenIE: null,
+    done: false,
+    
+    constructor: function(dpem1, dpem2, dpem1ie, dpem2ie, dpen1, dpen2, dpen1ie, dpen2ie, rpemIE, rpenIE){
+        this.depembilang1 = dpem1;
+        this.depembilang2 = dpem2;
+        this.depembilang1IE = dpem1ie;
+        this.depembilang2IE = dpem2ie;
+        this.depenyebut1 = dpen1;
+        this.depenyebut2 = dpen2;
+        this.depenyebut1IE = dpen1ie;
+        this.depenyebut2IE = dpen2ie;
+        this.repemIE = rpemIE;
+        this.repenIE = rpenIE;
+    }
+}
+
+define finalRes{
+    //simplified
+    simpembilang: null,
+    simpenyebut: null,
+    simpemIE: null,
+    simpenIE: null,
+    constructor: function(spem, spen, spemIE, spenIE){
+        this.simpembilang = spem;
+        this.simpenyebut = spen;
+        this.simpenIE = spenIE;
+        this.simpemIE = spemIE;
+    }
+}
+
+// Tipe lainnya yang menjadi 'standar' untuk Nools model tracer.
+// Bagian ini merepresentasikan input siswa dalam working memory milik tracer.
+define StudentValues {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s,a,i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+// Fungsi hint
+define Hint {
+  precedence: 0,
+  msg: "",
+  constructor: function(m, optPrecedence) {
+  	this.msg = m;
+  	this.precedence = optPrecedence || 0;
+  }
+}
+
+define IsHintMatch {
+  constructor: function() {
+  }
+}
+
+// Fungsi TPA
+define TPA {
+  selection: null,
+  action: null,
+  input: null,
+  constructor: function(s, a, i) {
+  	if(Array.isArray(s)){
+  		this.selection = s[0];
+  		this.action = s[1];
+  		this.input = s[2];
+  	} else{
+  		this.selection = s;
+  		this.action = a;
+  		this.input = i;
+  	}
+  }
+}

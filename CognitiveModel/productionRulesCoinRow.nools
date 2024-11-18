@@ -1,0 +1,365 @@
+import("typesCoinRow.nools");
+
+rule Bootstrap {
+    when {
+        t: Boolean t == true from true;
+    } then {
+        // Membuat problem baru di working memory.
+        assert(new Problem(coins,fi,ci,headers,null,null,"maxProfit","selectedCoin",coinsolutions));
+
+        // Buat facts pada working memory BottomUp mulai dari indeks 0 sampai indeks 6
+        // BottomUp(colmn, cc, bv, tbv, ccie, bvie, tbvie, csie)
+		for (var i = 0; i <= 6; i++) {
+			//Kalau masih koin pertama, max adalah koinnya sendiri, beforeValue dan twoBeforeValue nya tidak ada (0)
+            if (i == 0) {
+                assert(new BottomUp(0, 0, 0, 0, "coinRowTab.R1C1", null, null, "coinRowTab.R2C1")); //gaada interface untuk bvie dan tbvie.
+                // console.log("Zero success");
+            } else if (i == 1){
+                assert(new BottomUp(i, coins[i-1], null, 0, "coinRowTab.R1C2", "coinRowTab.R2C"+i, null, "coinRowTab.R2C2")); //gaada interface untuk tbvie.
+                // console.log("One success");
+            } else if (i == 2){
+                assert(new BottomUp(i, coins[i-1], null, null, "coinRowTab.R1C3", "coinRowTab.R2C"+i, "coinRowTab.R2C"+(i-1),"coinRowTab.R2C"+(i+1)));
+                // console.log("two success");
+                
+            } else {
+                assert(new BottomUp(i, coins[i-1], null, null, "coinRowTab.R1C"+(i+1), "coinRowTab.R2C"+i, "coinRowTab.R2C"+(i-1),"coinRowTab.R2C"+(i+1)));
+                // console.log("success");
+            }	
+		}
+        printFacts(BottomUp);
+        printFacts(Problem);
+        
+        // Inisiasi interfacenya
+        // COLUMN 0 
+        assert(new TPA("coinRowTab.R0C0", "UpdateTextField","i"));
+        assert(new TPA("coinRowTab.R1C0", "UpdateTextField",fi));
+        assert(new TPA("coinRowTab.R2C0", "UpdateTextField",ci));
+
+        // COLUMN 1
+        assert(new TPA("coinRowTab.R0C1", "UpdateTextField",headers[0]));
+        assert(new TPA("coinRowTab.R1C1", "UpdateTextField","-"));
+        
+        //COLUMN 2 - 7
+        for (i = 2; i <= 7; i++){
+            assert(new TPA("coinRowTab.R0C"+i, "UpdateTextField",headers[i-1]));
+            assert(new TPA("coinRowTab.R1C"+i, "UpdateTextField",coins[i-2]));
+        }
+
+        setProblemAttribute("use_backtracking", true);
+        setProblemAttribute("use_hint_fact", true);
+        halt();
+    }
+}
+
+
+rule enterTableSolution {
+    when{
+        // Cocokkan terlebih dahulu fakta Bottom Up yang siap untuk dikerjakan
+        // Fact Bottom Up siap dikerjakan apabila:
+        // 1. Memiliki before value
+        // 2. Memiliki two before value
+        // 3. Nilai solution belum diinput
+
+        // Ambil semua fact BottomUp dari dua value setelahnya dan value setelahnya
+        // Hanya akan diisi ketika:
+        // 1. nextvalue, nv.beforeValueIE == bu.currentSolutionIE, nv.beforeValue == null, solution == null
+        // 2. twonextvalue, tnv.beforeValueIE == bu.currentSolutionIE, tnv.beforeValue == null, solution == null
+
+        // Cari semua fact BottomUp yang memiliki constraint seperti poin 1,2,3.
+        bu: BottomUp bu.beforeValue != null && bu.twoBeforeValue != null && bu.solution == null
+        {column: colmn, currentCoin: curc, beforeValue: onebv, twoBeforeValue: twobv, currentSolutionIE: cell};
+
+        // Ambil semua fact BottomUp berikutnya untuk diupdate nilai before valuenya.
+        nbu: BottomUp nbu.beforeValue == null && nbu.beforeValueIE == bu.currentSolutionIE;
+
+        // Ambil semua fact BottomUp berikutnya untuk diupdate nilai two before valuenya.
+        tnbu: BottomUp tnbu.twobeforeValue == null && tnbu.twoBeforeValueIE == bu.currentSolutionIE;
+
+        // Ambil fact problem untuk diupdate solusi-solusi yang telah didapatkan.
+        prb: Problem
+        {solutions: prosol};
+
+    } then {
+        // Fungsi solusi tabel
+        // 1. Tentukan solution dengan membandingkan nilai sebelumnya dengan nilai dua kolom sebelumnya + koin saat ini. DONE YES
+        // 2. Buat pesan hint untuk memasukkan nilai
+        // 3. Periksa input, kalau udah sesuai update working memorynya :D
+
+        // Buat variabel solusi
+        let sol = Math.max(onebv, curc + twobv);
+        console.log(sol);
+
+
+        // Ambil nilai yang diinput oleh siswa
+        let currentValue = parseInt(document.getElementById(cell).querySelector('textarea').value);
+        console.log("ini adalh currentValue" + currentValue);
+
+        // Update solutions di problem.
+        let solArray = prosol;
+        console.log("solArray nih");
+        console.log(solArray);
+        solArray[colmn]=sol;
+
+        // Pesan hint:
+        // 1. Beritahu siswa untuk melihat apakah koin saat ini memengaruhi solusi sebelumnya 
+        // 2. Minta siswa untuk membandingkan apakah koin memengaruhi solusi sebelumnya atau dua solusi sebelumnya
+        // 3. Buat pesan hint untuk memasukkan nilai apabila siswa masih belum mengerti 
+        
+        let hintMessage = "Perhatikan apakah koin ke-" + colmn + " memengaruhi solusi sebelumnya atau tidak!";
+        assert(new Hint(hintMessage));
+        console.log("hint1");
+        let hintMessage1 = "Coba bandingkan apakah solusi optimal pada kolom ke " + colmn + " adalah solusi yang sama dengan solusi sebelumnya atau solusi dua sebelumnya ditambah koin saat ini!";
+        assert(new Hint(hintMessage1));
+        console.log("hint2");
+        let hintMessage2 = "Masukkan " + sol + " pada kolom ke " + colmn + ".";
+        assert(new Hint(hintMessage2));
+
+        console.log(checkSAI({selection: cell, action: "UpdateTextArea", input: sol.toString()}) + "anjay");
+        console.log(nbu);
+        console.log(tnbu);
+
+        // Periksa input
+        if(checkSAI({selection: cell, action: "UpdateTextArea", input: sol}) && (currentValue != null) && (solArray != null)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut ke kolom berikutnya.</html>");
+            modify(bu, "solution", sol); //Update fact bottomup yang ada
+
+            modify(nbu, "beforeValue", currentValue);
+            console.log("Print fact nbu");
+            console.log(nbu);
+
+            modify(tnbu, "twoBeforeValue", currentValue);
+            console.log("Print fact tnbu");
+            console.log(tnbu);
+
+            modify(prb, "solutions", solArray);
+            console.log(prb);
+
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih salah.</html>");
+            backtrack();
+        }
+        
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(BottomUp);
+        printFacts(Problem);
+    }
+    
+}
+
+rule enterLastTwoValue{
+    when{
+        bu: BottomUp bu.beforeValue != null && bu.twoBeforeValue != null && bu.solution == null
+        {column: colmn, currentCoin: curc, beforeValue: onebv, twoBeforeValue: twobv, currentSolutionIE: cell};
+
+        // Ambil semua fact BottomUp berikutnya untuk diupdate nilai before valuenya.
+        nbu: BottomUp nbu.beforeValue == null && nbu.beforeValueIE == bu.currentSolutionIE;
+
+        // Ambil fact problem untuk diupdate solusi-solusi yang telah didapatkan.
+        prb: Problem
+        {solutions: prosol};
+
+    } then {
+        let sol = Math.max(onebv, curc + twobv);
+
+         // Pesan hint:
+        // 1. Beritahu siswa untuk melihat apakah koin saat ini memengaruhi solusi sebelumnya 
+        // 2. Minta siswa untuk membandingkan apakah koin memengaruhi solusi sebelumnya atau dua solusi sebelumnya
+        // 3. Buat pesan hint untuk memasukkan nilai apabila siswa masih belum mengerti 
+        
+        let hintMessage = "Perhatikan apakah koin ke-" + colmn + " memengaruhi solusi sebelumnya atau tidak!";
+        assert(new Hint(hintMessage));
+
+        let hintMessage1 = "Coba bandingkan apakah solusi optimal pada kolom ke " + colmn + " adalah solusi yang sama dengan solusi sebelumnya atau solusi dua sebelumnya ditambah koin saat ini!";
+        assert(new Hint(hintMessage1));
+
+        let hintMessage2 = "Masukkan " + sol + " pada kolom ke " + colmn + ".";
+        assert(new Hint(hintMessage2));
+
+        // Ambil nilai yang diinput oleh siswa
+        let currentValue = parseInt(document.getElementById(cell).querySelector('textarea').value);
+        console.log("ini adalh currentValue" + currentValue);
+
+        // Update solutions di problem.
+        let solArray = prosol;
+        console.log("solArray nih");
+        console.log(solArray);
+        solArray[colmn]=sol;
+
+        // Periksa input
+        if(checkSAI({selection: cell, action: "UpdateTextArea", input: sol}) && (solArray != null)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut ke kolom berikutnya.</html>");
+            modify(bu, "solution", sol); //Update fact bottomup yang ada
+
+            modify(nbu, "beforeValue", currentValue);
+            console.log("Print fact tnbu");
+            console.log(nbu);
+
+            modify(prb, "solutions", solArray);
+            console.log(prb);
+
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih salah.</html>");
+            console.log("masuk backtrack malah");
+            backtrack();
+        }
+        
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(BottomUp);
+        printFacts(Problem);
+    }
+}
+
+
+
+rule enterLastValue{
+    when{
+        bu: BottomUp bu.beforeValue != null && bu.twoBeforeValue != null && bu.solution == null
+        {column: colmn, currentCoin: curc, beforeValue: onebv, twoBeforeValue: twobv, currentSolutionIE: cell};
+
+        prb: Problem prb.maxProfit == null
+        {maxProfit: mp, solutions: prosol};
+        
+    } then {
+        let sol = Math.max(onebv, curc + twobv);
+
+        // Pesan hint:
+        // 1. Beritahu siswa untuk melihat apakah koin saat ini memengaruhi solusi sebelumnya 
+        // 2. Minta siswa untuk membandingkan apakah koin memengaruhi solusi sebelumnya atau dua solusi sebelumnya
+        // 3. Buat pesan hint untuk memasukkan nilai apabila siswa masih belum mengerti 
+        
+        let hintMessage = "Perhatikan apakah koin ke-" + colmn + " memengaruhi solusi sebelumnya atau tidak!";
+        assert(new Hint(hintMessage));
+        console.log("hint1");
+        let hintMessage1 = "Coba bandingkan apakah solusi optimal pada kolom ke " + colmn + " adalah solusi yang sama dengan solusi sebelumnya atau solusi dua sebelumnya ditambah koin saat ini!";
+        assert(new Hint(hintMessage1));
+        console.log("hint2");
+        let hintMessage2 = "Masukkan " + sol + " pada kolom ke " + colmn + ".";
+        assert(new Hint(hintMessage2));
+
+        // Update solutions di problem.
+        let solArray = prosol;
+        console.log("solArray nih");
+        console.log(solArray);
+        solArray[colmn]=sol;
+
+        // Periksa input
+        if(checkSAI({selection: cell, action: "UpdateTextArea", input: sol}) && (solArray != null)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut ke kolom berikutnya.</html>");
+            modify(bu, "solution", sol); //Update fact bottomup yang ada
+
+            modify(prb, "maxProfit", sol);
+
+            modify(prb, "solutions", solArray);
+            console.log(prb);
+
+            halt();
+        } else {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih salah.</html>");
+            console.log("masuk backtrack malah");
+            backtrack();
+        }
+        
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(BottomUp);
+        printFacts(Problem);
+    }
+}
+
+rule enterSelectedCoin{
+    when{
+        // Pastikan bahwa semua fact bottomup udah diselesaikan
+        not(bu: BottomUp bu.beforeValue != null && bu.twoBeforeValue != null && bu.solution == null);
+
+        // Ambil solusi-solusi dari table
+        prb: Problem prb.solutions != null && prb.coinSelected == null
+        {solutions: sls, coinSelectedIE: cell, coinSelected: cs};
+    } then{
+        // 1. Ambil array of solutions solutionsnya
+        // 2. Iterasikan mulai dari yang paling ujung.
+        // 3. Check dari yang paling ujung, kalau misalkan berbeda dari nilai solusi sebelumnya, berarti koin tersebut diambil
+        // 3a. Koin sebelumnya tidak akan diambil, yang berarti iterasi akan mundur 2 langkah.
+        // 4. Kalau solusinya sama, berarti koin tersebut tidak diambil.
+        // 4a. Iterasi mundur selangkah untuk dibandingkan dengan solusi yang sebelumnya lagi.
+        // 5. Kalau sudah di koin 1 berarti iterasi cukup berkurang 1 kali dan selesai
+        let csl = [];
+        let counter = 0;
+        let i = sls.length - 1;
+
+        console.log(i);
+
+        while (i > 0){
+            if(sls[i] > sls[i-1]){
+                csl[counter] = i;
+                counter = counter + 1;
+                i = i - 2;
+            } else if(sls[i] == sls[i-1]){
+                i = i - 1;
+            }
+        }
+        console.log("ini csl");
+        console.log(csl);
+        console.log(csl.join(","));
+        let ans = csl.join(",");
+
+        let hintMessage = "Perhatikan tabel solusi! Koin-koin terpilih adalah koin-koin yang tidak bertetangga dan memberi perbedaan dari solusi sebelumnya";
+        assert(new Hint(hintMessage));
+        hintMessage = "Masukkan nilai secara terurut mengecil";
+        assert(new Hint(hintMessage));
+        hintMessage = "Masukkan nilai " + ans;
+        assert(new Hint(hintMessage));
+
+        // Check input siswa apakah sudah benar atau belum
+        if(checkSAI({selection: cell, action: "UpdateTextField", input: ans})){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut ke soal beirkutnya!</html>");
+            modify(prb, "coinSelected", csl);
+            halt();
+        } else{
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum tepat! Perhatikan bahwa koin harus dimasukkan secara terurut mengecil.</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+rule enterMaxProfit {
+    when{
+        prb: Problem prb.maxProfit != null && prb.done != true && prb.coinSelected != null
+        {maxProfit: mp, maxProfitIE: cell};
+
+    } then {
+        let hintMessage = "Perhatikan tabel solusi, max profit memiliki nilai terbesar dalam tabel tersebut.";
+        assert(new Hint(hintMessage));
+        hintMessage = "Masukkan " + mp + " pada kolom " + cell + ".";
+        assert(new Hint(hintMessage));
+
+        if(checkSAI({selection: cell, action: "UpdateTextField", input: mp})){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Tekan tombol done untuk menyelesaikan soal ini!</html>");
+            modify(prb, "done", true);
+            halt();
+        } else{
+            setSuccessOrBugMsg("<html>Jawaban kamu masih salah. Ingat bahwa maxprofit adalah solusi terakhir yang didapatkan dari tabel solusi</html>");
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+    }
+}
+
+rule DoneRule {
+    when {
+        // Priksa kalau semua komponen sudah terisi
+        prb : Problem prb.done == true;
+    }
+    then {
+        let hintMessage = "Klik tombol 'Done' untuk menyelesaikan problem ini";
+        assert(new Hint(hintMessage));
+
+        
+        if (checkSAI({selection: "done", action: "ButtonPressed", input: "don't_care"})) {
+            halt(); 
+        } else {
+            backtrack(); 
+        }
+    }
+}

@@ -1,0 +1,93 @@
+// Definisikan working memory soal
+define Problem {
+	probcoins: null,
+	functioni: null,
+	coini: null,
+	probheaders: null,
+	maxProfit: null, 
+	coinSelected: null,
+	maxProfitIE: null,
+	coinSelectedIE: null,
+	solutions: null,
+	done: false,
+	constructor: function(coins,fi,ci,headers,mp,cs,mpie,csie,arrSol){
+		this.probcoins = coins;
+		this.functioni = fi;
+		this.coini = ci;
+		this.probheaders = headers;
+		this.maxProfit = mp;
+		this.coinSelected = cs; 
+		this.maxProfitIE = mpie;
+		this.coinSelectedIE = csie;
+		this.solutions = arrSol;
+	}
+}
+
+// Class BottomUp untuk menyimpan informasi proses BottomUp
+define BottomUp {
+	column: null,
+	solution: null, // Nilai solusi yang akan terpilih dari proses membandingkan TIDAK DIINISIASI YES
+	currentCoin: null, // Nilai koin saat ini
+	beforeValue: null, // Nilai solusi sebelumnya
+	twoBeforeValue: null, // Nilai solusi dua kotak sebelumnya
+	currentCoinIE: null, // Komponen interface untuk koin pada kolom saat ini 
+	beforeValueIE: null, // Komponen interface untuk solusi kolom sebelumnya
+	twoBeforeValueIE: null, // Komponen interface untuk solusi dua kolom sebelumnya
+	currentSolutionIE: null, // Komponen interface untuk kolom solusi saat ini
+	constructor: function(colmn, cc, bv, tbv, ccie, bvie, tbvie, csie){
+		this.column = colmn;
+		this.currentCoin = cc;
+		this.beforeValue = bv;
+		this.twoBeforeValue = tbv;
+		this.currentCoinIE = ccie;
+		this.beforeValueIE = bvie;
+		this.twoBeforeValueIE = tbvie;
+		this.currentSolutionIE = csie;
+	}
+}
+
+// Tipe lainnya yang menjadi 'standar' untuk Nools model tracer.
+// Bagian ini merepresentasikan input siswa dalam working memory milik tracer.
+define StudentValues {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s,a,i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+// Fungsi hint
+define Hint {
+  precedence: 0,
+  msg: "",
+  constructor: function(m, optPrecedence) {
+  	this.msg = m;
+  	this.precedence = optPrecedence || 0;
+  }
+}
+
+define IsHintMatch {
+  constructor: function() {
+  }
+}
+
+// Fungsi TPA
+define TPA {
+  selection: null,
+  action: null,
+  input: null,
+  constructor: function(s, a, i) {
+  	if(Array.isArray(s)){
+  		this.selection = s[0];
+  		this.action = s[1];
+  		this.input = s[2];
+  	} else{
+  		this.selection = s;
+  		this.action = a;
+  		this.input = i;
+  	}
+  }
+}

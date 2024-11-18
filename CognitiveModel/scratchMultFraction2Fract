@@ -1,0 +1,376 @@
+rule buggyEnterPembilangError1{
+    salience: -2;
+    when{
+        se: StudentError
+        {errorPembilang1: epm1, errorPembilang2: epm2};
+
+        prb: Problem
+        {pembilang1: pb1, pembilang2: pb2};
+
+        mr: multiplicationResult (mu.depembilang1 == null || mu.depembilang2 == null)
+        {depembilang1: dpm1, depembilang2: dpm2, depembilang1IE: dpm1ie, depembilang2IE: dpm2ie}
+
+    }then{
+        if(checkSAI({selection: dpm1ie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+        } else if (checkSAI({selection: dpm2ie, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+        }
+        backtack();
+    }
+}
+
+
+rule buggyEnterPembilangError1{
+    salience: -2;
+    when{
+        se: StudentError
+        {errorPembilang1: epm1, errorPembilang2: epm2};
+
+        prb: Problem
+        {pembilang1: pb1, pembilang2: pb2};
+
+        mu: multiplicationResult mu.done == false && (mu.depembilang1 == null || mu.depembilang2 == null)
+        {done: dn, depembilang1: dpm1, depembilang2: dpm2, depembilang1IE: dpm1ie, depembilang2IE: dpm2ie, repemIE: rpemie, repenIE: rpenie};
+
+    }then{
+        if(checkSAI({selection: dpm1ie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorPembilang1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+        } else if (checkSAI({selection: dpm2ie, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+        }
+        backtrack();
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(Problem);
+    }
+}
+
+
+rule buggyEnterPenyebutError1{
+    salience: -3;
+    when{
+        se: StudentError
+        {errorPenyebut1: epn1, errorPenyebut2: epn2};
+
+        prb: Problem
+        {penyebut1: pen1, penyebut2: pen2};
+
+        mu: multiplicationResult mu.done == false && (mu.depenyebut1 == null || mu.depenyebut2 == null)
+        {done: dn, depenyebut1: dpn1, depenyebut2: dpn2, depenyebut1IE: dpn1ie, depenyebut2IE: dpn2ie, repemIE: rpemie, repenIE: rpenie};
+
+    }then{
+        if(checkSAI({selection: dpn1ie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            modify(se, "errorPenyebut1", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+        } else if (checkSAI({selection: dpn2ie, action: "UpdateTextField", input: "don't_care"}, null, true)) {
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai pecahan pertama (atas) di sebelah kiri dan pecahan kedua (bawah) di sebelah kanan!</html>");
+        }
+        backtrack();
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(Problem);
+    }
+}
+
+rule buggySimplifiedFinal{
+    salience: -2
+    when{
+        // Masukkan memory error students
+        se: StudentError
+        {errorPenyebut1: epn1, errorPenyebut2: epn2};
+
+        // Hanya bisa dilakukan apabila task sebelumnya telah selesai
+         prb: Problem
+         {done: dn};
+
+         mu: multiplicationResult mu.done == true
+        {repemIE: rpemie, repenIE: rpenie, repembilang: rpem, repenyebut: rpen};
+
+        // Ambil fact tentang hasil akhir
+        fr: finalRes fr.simpembilang == null || fr.simpenyebut == null
+        {simpembilang: pem, simpenyebut: peny, simpenIE: penie,simpemIE: pemie};
+    } then{
+        let finalpem = 0;
+        let finalpen = 0;
+        let repem = rpem;
+        let bugpem = 0;
+        let bugpen = 0;
+
+        console.log("finpem: " + finalpem);
+        console.log("finpen: " + finalpen);
+        console.log("repem: " + repem);
+
+        if(finalpem == 0 && finalpen == 0 && repem == 1){
+            finalpem = rpem;
+            finalpen = rpen;
+        } else {
+            for (var i = 2; i <= rpem; i++){
+                if(rpen % i == 0 && rpem % i == 0){
+                    finalpem = rpem / i;
+                    finalpen = rpen / i;
+                }
+            }
+
+            if(finalpem == 0 && finalpen == 0){
+                finalpem = rpem;
+                finalpen = rpen;
+            } else{
+                bugpem = finalpem * 2;
+                bugpen = finalpen * 2;
+            }
+        }
+
+        if(checkSAI({selection:pemie, action:"UpdateTextField",input: bugpem}, null, true)){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Nilai <b>" + bugpem + " </b> masih bisa disederhanakan lagi ya</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: bugpem}, null, true)){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Nilai <b>" + bugpem + " </b> masih bisa disederhanakan lagi ya</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: "don't_care"}, null, true) && fr.simpembilang != null){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang menjadi faktor persekutuan</html>");
+            halt();
+        } else if(checkSAI({selection:pemie, action:"UpdateTextField",input: "don't_care"}, null, true) && fr.simpenyebut != null){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang menjadi faktor persekutuan</html>");
+            halt();
+        } else if(checkSAI({selection:pemie, action:"UpdateTextField",input: "don't_care"}, null, true)){
+            modify(se, "errorSimplifiedPembilang", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang menjadi faktor persekutuan</html>");
+            halt();
+        } else if(checkSAI({selection:penie, action:"UpdateTextField",input: "don't_care"}, null, true)){
+            modify(se, "errorSimplifiedPenyebut", 1);
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Ingat bahwa sederhana berarti tidak ada lagi bilangan selain 1 yang menjadi faktor persekutuan</html>");
+            halt();
+        } else {
+            backtrack();
+        }
+        
+    }
+}
+
+rule buggyPartoneDone {
+    salience: -2
+    when{
+        // Masukkan memory error students
+        se: StudentError
+        {errorResPembilang: ers1, errorResPenyebut: ers2};
+
+        mu: multiplicationResult mu.done == false && (mu.repembilang == null || mu.repenyebut == null) && mu.depembilang1 != null && mu.depembilang2 != null
+        {done: dn, depembilang1: dpm1, depembilang2: dpm2, depenyebut1: dpn1, depenyebut2: dpn2, depembilang1IE: dpm1ie, depembilang2IE: dpm2ie, depenyebut1IE: dpn1ie, depenyebut2IE: dpn2ie, repemIE: rpemie, repenIE: rpenie};
+    }then{
+        let solpem = dpm1 * dpm2;
+        let solpen = dpn1 * dpn2;
+        
+        let hintMessage = "Pada bagian kali ini silahkan masukkan hasil perkalian pecahan tanpa disederhanakan";
+        assert(new Hint(hintMessage));
+        hintMessage = "Kamu bisa menggunakan visualisasi disamping untuk melihat warna yang beririsan dibagi dengan seluruh kotak yang diberi warna";
+        assert(new Hint(hintMessage));
+
+        if(checkSAI({selection: rpemie, action: "UpdateTextField", input: "don't_care"}, null, true) && mu.repenyebut!= null){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            halt();
+        }else if(checkSAI({selection: rpenie, action: "UpdateTextField", input: "don't_care"}, null, true) && mu.repembilang != null){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(se, "errorResPenyebut", 1);
+
+            halt();
+        }else if(checkSAI({selection: rpemie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(se, "errorResPembilang", 1);
+            halt();
+        } else if(checkSAI({selection: rpenie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(se, "errorResPenyebut", 1);
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(multiplicationResult);
+    }
+}
+
+rule buggyPartoneDone2 {
+    salience: -2
+    when{
+        // Masukkan memory error students
+        se: StudentError se.errorResPembilang == 1 || se.errorResPenyebut == 1
+        {errorResPembilang: ers1, errorResPenyebut: ers2};
+
+        mu: multiplicationResult mu.done == false && (mu.repembilang == null || mu.repenyebut == null) && mu.depembilang1 != null && mu.depembilang2 != null
+        {done: dn, depembilang1: dpm1, depembilang2: dpm2, depenyebut1: dpn1, depenyebut2: dpn2, depembilang1IE: dpm1ie, depembilang2IE: dpm2ie, depenyebut1IE: dpn1ie, depenyebut2IE: dpn2ie, repemIE: rpemie, repenIE: rpenie};
+    }then{
+        let solpem = dpm1 * dpm2;
+        let solpen = dpn1 * dpn2;
+        let finalpem = 0;
+        let finalpen = 0;
+        let repem = rpem;
+
+        console.log("finpem: " + finalpem);
+        console.log("finpen: " + finalpen);
+        console.log("repem: " + repem);
+
+        // Kalau pembilang == 1, otomatis tidak ada lagi penyederhanaan, set pembilang dan penyebut sama seperti hasil sebelumnya
+        if(finalpem == 0 && finalpen == 0 && repem == 1){
+            finalpem = rpem;
+            finalpen = rpen;
+        } else {
+            // Kalau bukan coba cari faktor pembilangnya untuk mendapatkan nilai paling sederhana
+            for (var i = 2; i <= rpem; i++){
+                if(rpen % i == 0 && rpem % i == 0){
+                    finalpem = rpem / i;
+                    finalpen = rpen / i;
+                }
+            }
+
+            // Kalau tidak ketemu, otomatis tidak ada penyederhanaan juga.
+            if(finalpem == 0 && finalpen == 0){
+                finalpem = rpem;
+                finalpen = rpen;
+            }
+        }
+        
+        let hintMessage = "Pada bagian kali ini silahkan masukkan hasil perkalian pecahan tanpa disederhanakan";
+        assert(new Hint(hintMessage));
+        hintMessage = "Kamu bisa menggunakan visualisasi disamping untuk melihat warna yang beririsan dibagi dengan seluruh kotak yang diberi warna";
+        assert(new Hint(hintMessage));
+
+        if(checkSAI({selection: rpemie, action: "UpdateTextField", input: "don't_care"}, null, true) && mu.repenyebut!= null){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            halt();
+        }else if(checkSAI({selection: rpenie, action: "UpdateTextField", input: "don't_care"}, null, true) && mu.repembilang != null){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(se, "errorResPenyebut", 1);
+
+            halt();
+        }else if(checkSAI({selection: rpemie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(se, "errorResPembilang", 1);
+            halt();
+        } else if(checkSAI({selection: rpenie, action: "UpdateTextField", input: "don't_care"}, null, true)){
+            setSuccessOrBugMsg("<html>Keren kamu benar! Ayo lanjut bagian berikutnya!</html>");
+            modify(se, "errorResPenyebut", 1);
+            halt();
+        } else {
+            backtrack();
+        }
+        setTracerLogFlags("debug", "error", "conflict_tree", "sai_check", "modify");
+        printFacts(multiplicationResult);
+    }
+}
+
+<script>
+        // Fungsi mewarnai
+        function highlightCells(startRow, startCol, rowSize, colSize, rowCount, colCount, classwarna, baseClass = null) {
+            for (let row = startRow; row < startRow + rowSize && row < rowCount; row++) {
+                for (let col = startCol; col < startCol + colSize && col < colCount; col++) {
+                    let cellId = `table1.R${row}C${col}`;  // Ambil IDnya
+                    let cell = document.getElementById(cellId); // Ambil cell ID
+                
+                    if (cell) {
+                        let textarea = cell.querySelector('textarea'); // Ambil informasi HTML Textarea
+                        if (textarea) {
+                            // Warnai base warna gray...
+                            if (baseClass) {
+                                textarea.classList.remove('coloured1', 'coloured2', 'overlap'); // Remove semua color
+                                textarea.classList.add(baseClass); // Pasang grey class
+                            } else {
+                                // Check apakah udah diwarnai sebelumnya
+                                if (textarea.classList.contains('coloured1') && classwarna === 'coloured2') {
+                                    textarea.classList.remove('coloured1'); // Remove merah
+                                    textarea.classList.add('overlap'); // Warnai sebagai hijau
+                                } else if (textarea.classList.contains('grey') && classwarna === 'coloured2'){
+                                    textarea.classList.remove('grey'); // Remove merah
+                                    textarea.classList.add('coloured2'); // Warnai sebagai hijau
+                                } else if (textarea.classList.contains('grey') && classwarna === 'coloured1'){
+                                    textarea.classList.remove('grey'); // Remove merah
+                                    textarea.classList.add('coloured1'); // Warnai sebagai hijau
+                                } else {
+                                    textarea.classList.add(classwarna); // Kalo belom warnai biasa aja
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function checkDanColor() {
+            //Ambil valuesnya
+            const enumerator1 = document.getElementById('enumult1').querySelector('input').value;
+            const denominator1 = document.getElementById('denomult1').querySelector('input').value;
+            const enumerator2 = document.getElementById('enumult2').querySelector('input').value;
+            const denominator2 = document.getElementById('denomult2').querySelector('input').value;
+
+            const rowCount = 10;  // Total rows 
+            const colCount = 10;  // Total columns 
+
+            // Loop untuk hapus semua warna
+            for (let row = 0; row < 10; row++) {
+                for (let col = 0; col < 10; col++) {
+                    let cellId = `table1.R${row}C${col}`;
+                    let cell = document.getElementById(cellId);
+                    if (cell) {
+                        let textarea = cell.querySelector('textarea');
+                        if (textarea) {
+                            // Hapus semua classnya dlu...
+                            textarea.classList.remove('coloured1', 'coloured2', 'overlap', 'grey');
+                        }
+                    }
+                }
+            }
+
+            // Warnai sebagai abu-abu
+            if(enumerator1 && enumerator2 && denominator1 && denominator2){
+                if (denominator1 && denominator2) {
+                    let rowsToHighlight = parseInt(denominator1);  //Row
+                    let colsToHighlight = parseInt(denominator2); // Column
+                    highlightCells(0, 0, rowsToHighlight, colsToHighlight, rowCount, colCount, null, 'grey');
+                }
+
+                // Warnai merah
+                if (enumerator1 && denominator2) {
+                    let rowsToHighlight = parseInt(enumerator1);  //Row
+                    let colsToHighlight = parseInt(denominator2); // Column
+                    highlightCells(0, 0, rowsToHighlight, colsToHighlight, rowCount, colCount, 'coloured1');
+                }
+
+                // Warnai Kuning
+                if (enumerator2 && denominator1) {
+                    let rowsToHighlight = parseInt(denominator1);  //Row
+                    let colsToHighlight = parseInt(enumerator2);   //Column
+                    highlightCells(0, 0, rowsToHighlight, colsToHighlight, rowCount, colCount, 'coloured2');
+                }
+            }
+            
+        }
+
+        // Event listener to check for changes
+        function addInputEventListeners() {
+            console.log('Adding event listeners to input fields');
+            document.getElementById('enumult1').querySelector('input').addEventListener('input', checkDanColor, true);
+            document.getElementById('enumult2').querySelector('input').addEventListener('input', checkDanColor, true);
+            document.getElementById('denomult1').querySelector('input').addEventListener('input', checkDanColor, true);
+            document.getElementById('denomult2').querySelector('input').addEventListener('input', checkDanColor, true);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            addInputEventListeners();
+        });
+    </script>
+
+    .coloured1 {
+        color: rgb(0, 0, 0); background-color: red !important;
+}
+.coloured2 {
+        color: rgb(0, 0, 0); background-color: yellow !important;
+}
+.grey {
+        color: rgb(0, 0, 0); background-color: grey !important;
+}
+.overlap {
+        color: rgb(0, 0, 0); background-color: yellow !important; opacity: 75%;
+}
