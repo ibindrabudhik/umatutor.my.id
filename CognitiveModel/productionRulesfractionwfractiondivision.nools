@@ -354,11 +354,11 @@ rule buggykonversiPecahan1e0 {
 
          if(checkSAI({selection: cpmie1, action: "UpdateTextField", input: "don't_care"}, null, true)){
             modify(se, "errorConPembilang1", 1);
-            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk perkalian menjadi pecahan, pecahan pertama nilainya tidak berubah!</html>");
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian pecahan, pecahan pertama nilainya tidak berubah!</html>");
             halt();
         } else if (checkSAI({selection: cpnie1, action: "UpdateTextField", input: "don't_care"}, null, true)) {
             modify(se, "errorConPenyebut1", 1);
-            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk perkalian menjadi pecahan, pecahan pertama nilainya tidak berubah!</html>");
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian pecahan, pecahan pertama nilainya tidak berubah!</html>");
             halt();
         } else {
             backtrack();
@@ -384,11 +384,11 @@ rule buggykonversiPecahan2e0 {
 
         if(checkSAI({selection: cpmie2, action: "UpdateTextField", input: "don't_care"}, null, true)){
             modify(se, "errorConPembilang2", 1);
-            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian pecahan, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
             halt();
         } else if (checkSAI({selection: cpnie2, action: "UpdateTextField", input: "don't_care"}, null, true)) {
             modify(se, "errorConPenyebut2", 1);
-            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian pecahan, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
             halt();
         } else {
             backtrack();
