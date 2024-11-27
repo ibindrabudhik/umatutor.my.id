@@ -415,11 +415,11 @@ rule buggykonversiPecahan1e1 {
 
         if(checkSAI({selection: cpmie1, action: "UpdateTextField", input: "don't_care"}, null, true) && ecpm1 == 1){
             modify(se, "errorConPembilang1", 1);
-            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen +"</b> pada pembilang pecahan di sebelah kiri!</html>");
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem +"</b> pada pembilang pecahan di sebelah kiri!</html>");
             halt();
         } else if (checkSAI({selection: cpnie1, action: "UpdateTextField", input: "don't_care"}, null, true) && ecpn1 == 1) {
             modify(se, "errorConPenyebut1", 1);
-            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpem +"</b> pada penyebut pecahan di sebelah kiri!</html>");
+            setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Letakkan nilai <b>"+ solpen +"</b> pada penyebut pecahan di sebelah kiri!</html>");
             halt();
         } else {
             setSuccessOrBugMsg("<html>Jawaban kamu masih belum benar! Perhatikan bahwa, ketika mengubah bentuk pembagian menjadi perkalian, pecahan kedua nilainya akan berubah, pembilang menjadi penyebut dan sebaliknya!</html>");
