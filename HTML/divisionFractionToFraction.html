@@ -55,6 +55,24 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <style id="current-page-style">
         .page-page-1{display:inherit; }
     </style>
@@ -62,10 +80,8 @@
     <!-- End of Silex HEAD tag do not remove -->
 <link rel="stylesheet" href="Assets/divisionFractionToFraction-styles.css"></head><body class="body-initial prevent-draggable silex-runtime silex-published">
     <div data-silex-id="background-initial" class="background background-initial editable-style container-element prevent-draggable" data-silex-type="container">
-        <div class="image-title">Pembagian Pecahan dengan Pecahan</div>
-        <div data-silex-type="image" class="editable-style silex-id-1725125662221-8 image-element page-page-1 paged-element" data-silex-id="silex-id-1725125662221-8">
-            <img class="silex-element-content" src="Assets/Chalkboard.png">
-        </div>
+
+        <div data-silex-type="image" class="editable-style silex-id-1725125662221-8 image-element page-page-1 paged-element" data-silex-id="silex-id-1725125662221-8"><img class="silex-element-content" src="Assets/Chalkboard.png"></div>
         <div data-silex-type="ctat" class="CTATHintWidget undefined editable-style silex-id-1725125750520-9 page-page-1 paged-element" data-ctat-tabindex="1" data-silex-id="silex-id-1725125750520-9">
             <table style="width: 100%; height: 100%;">
                 <tbody>
@@ -137,10 +153,28 @@
             <br>x
             <br>Penyebut 1</div>
         <div data-silex-type="text" class="CTATTextField editable-style silex-id-1727676033987-13 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1727676033987-13" id="ctatdiv712" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true" contenteditable="false">Hasil akhir</div>
-        <div class="buttonarea">
-            <a href="../index.html" class="purple-button">Go to Homepage</a>
-        </div>
-        <button onclick="window.location.reload()" class="refresh-button">New Question</button>
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1736390996032-1 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1736390996032-1" id="ctatdiv701" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true" contenteditable="false">1. 2. 3. 4. 5. 6. 7. 8. 9. 10.</div>
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1736392470115-2 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1736392470115-2" id="ctatdiv699" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true" contenteditable="false">1.
+            <br>2.
+            <br>3.
+            <br>4.
+            <br>5.
+            <br>6.
+            <br>7.
+            <br>8.
+            <br>9.
+            <br>10.</div>
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1736392543073-3 page-page-1 paged-element" data-silex-id="silex-id-1736392543073-3" id="ctatdiv699" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true" contenteditable="false">1. 2. 3. 4. 5. 6. 7. 8. 9. 10.</div>
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1736392553603-4 page-page-1 paged-element" data-silex-id="silex-id-1736392553603-4" id="ctatdiv702" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true" contenteditable="false">1.
+            <br>2.
+            <br>3.
+            <br>4.
+            <br>5.
+            <br>6.
+            <br>7.
+            <br>8.
+            <br>9.
+            <br>10.</div>
     </div><a id="page-page-1" data-silex-type="page" class="page-element">Page 1</a>
 
 
@@ -151,85 +185,24 @@
 
 
     <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
-    <script>
-        function checkDanColor() {
-            console.log('masuk mewarnai')
-            // Retrieve input values as integers (default to 0 if empty or invalid)
-            const enumerator1 = parseInt(document.getElementById('pembilangcon1').querySelector('input').value) || 0;
-            const denominator1 = parseInt(document.getElementById('penyebutcon1').querySelector('input').value) || 0;
-            const enumerator2 = parseInt(document.getElementById('pembilangcon2').querySelector('input').value) || 0;
-            const denominator2 = parseInt(document.getElementById('penyebutcon2').querySelector('input').value) || 0;
 
-            const rowCount = 10;  // Total rows
-            const colCount = 10;  // Total columns
 
-            // Clear all colors in table1 and table2
-            for (let row = 0; row < rowCount; row++) {
-                for (let col = 0; col < colCount; col++) {
-                    // Clear colors in table1
-                    let cellId1 = `table1.R${row}C${col}`;
-                    let cell1 = document.getElementById(cellId1);
-                    if (cell1) {
-                        let textarea1 = cell1.querySelector('textarea');
-                        if (textarea1) {
-                            textarea1.classList.remove('coloured1', 'coloured2', 'overlap', 'grey');
-                        }
-                    }
 
-                    // Clear colors in table2
-                    let cellId2 = `table2.R${row}C${col}`;
-                    let cell2 = document.getElementById(cellId2);
-                    if (cell2) {
-                        let textarea2 = cell2.querySelector('textarea');
-                        if (textarea2) {
-                            textarea2.classList.remove('coloured1', 'coloured2', 'overlap', 'grey');
-                        }
-                    }
-                }
-            }
 
-            // Color cells in table1 with 'coloured1' up to row and column limits
-            for (let row = 0; row < enumerator1 && row < rowCount; row++) {
-                for (let col = 0; col < enumerator2 && col < colCount; col++) {
-                    let cellId1 = `table1.R${row}C${col}`;
-                    let cell1 = document.getElementById(cellId1);
-                    if (cell1) {
-                        let textarea1 = cell1.querySelector('textarea');
-                        if (textarea1) {
-                            textarea1.classList.add('coloured1');
-                        }
-                    }
-                }
-            }
 
-            // Color cells in table2 with 'coloured2' up to row and column limits
-            for (let row = 0; row < denominator1 && row < rowCount; row++) {
-                for (let col = 0; col < denominator2 && col < colCount; col++) {
-                    let cellId2 = `table2.R${row}C${col}`;
-                    let cell2 = document.getElementById(cellId2);
-                    if (cell2) {
-                        let textarea2 = cell2.querySelector('textarea');
-                        if (textarea2) {
-                            textarea2.classList.add('coloured2');
-                        }
-                    }
-                }
-            }
-        }
 
-        // Event listener to check for changes
-        function addInputEventListeners() {
-            console.log('Adding event listeners to input fields');
-            document.getElementById('pembilangcon1').querySelector('input').addEventListener('input', checkDanColor, true);
-            document.getElementById('pembilangcon2').querySelector('input').addEventListener('input', checkDanColor, true);
-            document.getElementById('penyebutcon1').querySelector('input').addEventListener('input', checkDanColor, true);
-            document.getElementById('penyebutcon2').querySelector('input').addEventListener('input', checkDanColor, true);
-        }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            addInputEventListeners();
-        });
-    </script>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
