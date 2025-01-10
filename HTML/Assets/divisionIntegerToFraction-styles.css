@@ -88,4 +88,48 @@
         }
         .silex-id-1736393579306-3 {top: 440px; left: 410px; height: 140px; width: 20px; text-align: right; color: rgb(255, 255, 255); font-size: 12px;
         }
+        .coloured1 {
+                color: rgb(0, 0, 0); background-color: rgba(248,202,169,255) !important;
+        }
+        .coloured2 {
+                color: rgb(0, 0, 0); background-color: rgba(248,208,217,255) !important;
+        }
+        .purple-button {
+                position: relative;
+                top: 850px; /* Adjusted to move it below the "Done" and "Hint" buttons */
+                left: 70px; /* Adjust as necessary */
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: white;
+                background-color: purple;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+        }
+
+        .refresh-button{
+                position: relative;
+                top: 811px; /* Adjusted to move it below the "Done" and "Hint" buttons */
+                left: 270px; /* Adjust as necessary */
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: white;
+                background-color: purple;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+        }
+        .refresh-button:hover, .purple-button:hover {
+                background-color: darkmagenta;
+        }
+        .refresh-button {
+                cursor: pointer;
+                border: none;
+                outline: none;
+        }
+
     

@@ -163,6 +163,10 @@
             <br>8.
             <br>9.
             <br>10.</div>
+            <div class="buttonarea">
+                <a href="../index.html" class="purple-button">Go to Homepage</a>
+            </div>
+            <button onclick="window.location.reload()" class="refresh-button">New Question</button>
     </div><a id="page-page-1" data-silex-type="page" class="page-element">Page 1</a>
 
 
@@ -173,6 +177,83 @@
 
 
     <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
+    <script>
+        function checkDanColor() {
+             console.log('masuk mewarnai')
+             // Retrieve input values as integers (default to 0 if empty or invalid)
+             const enumerator1 = parseInt(document.getElementById('pembilangcon1').querySelector('input').value) || 0;
+             const enumerator2 = parseInt(document.getElementById('pembilangcon2').querySelector('input').value) || 0;
+             const denominator2 = parseInt(document.getElementById('penyebutcon2').querySelector('input').value) || 0;
+ 
+             const rowCount = 10;  // Total rows
+             const colCount = 10;  // Total columns
+ 
+             // Clear all colors in table1 and table2
+             for (let row = 0; row < rowCount; row++) {
+                 for (let col = 0; col < colCount; col++) {
+                     // Clear colors in table1
+                     let cellId1 = `table1.R${row}C${col}`;
+                     let cell1 = document.getElementById(cellId1);
+                     if (cell1) {
+                         let textarea1 = cell1.querySelector('textarea');
+                         if (textarea1) {
+                             textarea1.classList.remove('coloured1', 'coloured2', 'overlap', 'grey');
+                         }
+                     }
+ 
+                     // Clear colors in table2
+                     let cellId2 = `table2.R${row}C${col}`;
+                     let cell2 = document.getElementById(cellId2);
+                     if (cell2) {
+                         let textarea2 = cell2.querySelector('textarea');
+                         if (textarea2) {
+                             textarea2.classList.remove('coloured1', 'coloured2', 'overlap', 'grey');
+                         }
+                     }
+                 }
+             }
+ 
+             // Color cells in table1 with 'coloured1' up to row and column limits
+             for (let row = 0; row < enumerator1 && row < rowCount; row++) {
+                 for (let col = 0; col < enumerator2 && col < colCount; col++) {
+                     let cellId1 = `table1.R${row}C${col}`;
+                     let cell1 = document.getElementById(cellId1);
+                     if (cell1) {
+                         let textarea1 = cell1.querySelector('textarea');
+                         if (textarea1) {
+                             textarea1.classList.add('coloured1');
+                         }
+                     }
+                 }
+             }
+ 
+             // Color cells in table2 with 'coloured2' up to row and column limits
+             for (let row = 0; row < denominator2 && row < rowCount; row++) {
+                 for (let col = 0; col < 1 && col < colCount; col++) {
+                     let cellId2 = `table2.R${row}C${col}`;
+                     let cell2 = document.getElementById(cellId2);
+                     if (cell2) {
+                         let textarea2 = cell2.querySelector('textarea');
+                         if (textarea2) {
+                             textarea2.classList.add('coloured2');
+                         }
+                     }
+                 }
+             }
+         }
+ 
+         // Event listener to check for changes
+         function addInputEventListeners() {
+             console.log('Adding event listeners to input fields');
+             document.getElementById('pembilangcon1').querySelector('input').addEventListener('input', checkDanColor, true);
+             document.getElementById('pembilangcon2').querySelector('input').addEventListener('input', checkDanColor, true);
+             document.getElementById('penyebutcon2').querySelector('input').addEventListener('input', checkDanColor, true);
+         }
+ 
+         document.addEventListener('DOMContentLoaded', function () {
+             addInputEventListeners();
+         });
+     </script>
 
 
 

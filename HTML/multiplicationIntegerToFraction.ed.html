@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- generator meta tag -->
+    <!-- leave this for stats and Silex version check -->
+    <meta name="generator" content="Silex v2.2.5">
+    <!-- End of generator meta tag -->
+    <!--CSS-->
+    <link data-silex-static="true" href="css/silex/normalize.css" rel="stylesheet">
+    <link data-silex-static="true" href="css/silex/front-end.css" rel="stylesheet">
+    <link data-silex-static="true" href="https://cdn.ctat.cs.cmu.edu/releases/current/CTAT.css" rel="stylesheet">
+    <!--JS-->
+    <script data-silex-static="true" type="text/javascript" src="js/jquery.js"></script>
+    <script data-silex-static="true" type="text/javascript" src="js/jquery-ui.js"></script>
+    <script data-silex-static="true" type="text/javascript" src="https://cdn.ctat.cs.cmu.edu/releases/current/nools.js"></script>
+    <script data-silex-static="true" type="text/javascript" src="https://cdn.ctat.cs.cmu.edu/releases/current/ctatloader.js"></script>
+    <script data-silex-static="true" type="text/javascript" src="js/ctat/ctat_editor.min.js"></script>
+    <script type="text/javascript" src="js/silex/mut_observer.js"></script>
+    <script type="text/javascript" src="js/silex/pageable.js"></script>
+    <script type="text/javascript" src="js/silex/front-end.js"></script>
+
+    <style class="silex-inline-styles" type="text/css">
+        .body-initial {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1725125662221-8 {top: 0px; left: 0px; height: 860px; width: 820px;
+        }
+        .background-initial {background-color: rgb(255, 255, 255); top: 5px; left: 154px; width: 826px; height: 1015px;
+        }
+        .silex-id-1725125848861-11 {top: 190px; left: 220px; height: 60px; width: 520px;
+        }
+        .silex-id-1725127754823-41 {top: 200px; left: 90px; height: 40px; width: 40px; background-color: rgb(255, 255, 255); text-align: center;
+        }
+        .silex-id-1725127758103-42 {top: 200px; left: 160px; height: 40px; width: 40px; background-color: rgb(255, 255, 255); text-align: center;
+        }
+        .silex-id-1725126333376-17 {top: 320px; left: 180px; height: 40px; width: 40px;
+        }
+        .silex-id-1725126333378-18 {top: 370px; left: 180px; height: 40px; width: 40px;
+        }
+        .silex-id-1725127618067-36 {top: 200px; left: 130px; height: 40px; width: 30px; font-weight: bold; text-align: center; font-size: 36px; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1725126397608-21 {top: 350px; left: 140px; height: 40px; width: 30px; font-weight: bold; text-align: center; font-size: 30px; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1725126495285-22 {top: 360px; left: 240px; height: 20px; width: 20px; text-align: center; font-weight: bold; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1727670554931-2 {top: 270px; left: 280px; height: 40px; width: 180px; border-color: rgb(0, 0, 0); color: rgb(255, 255, 255);
+        }
+        .silex-id-1727670631177-3 {top: 270px; left: 100px; height: 40px; width: 120px; border-color: rgb(0, 0, 0); color: rgb(255, 255, 255);
+        }
+        .silex-id-1725125750520-9 {top: 800px; left: 460px; height: 140px; width: 306px;
+        }
+        .silex-id-1725126333385-19 {top: 350px; left: 180px; height: 20px; width: 40px; text-align: center; color: rgb(255, 255, 255);
+        }
+        .silex-id-1725126136213-12 {top: 350px; left: 100px; height: 40px; width: 40px;
+        }
+        .silex-id-1725127675157-39 {top: 130px; left: 90px; height: 40px; width: 40px; background-color: rgb(255, 255, 255); text-align: center;
+        }
+        .silex-id-1727670799532-7 {top: 320px; left: 320px; height: 40px; width: 40px;
+        }
+        .silex-id-1727670824706-8 {top: 370px; left: 320px; height: 40px; width: 40px;
+        }
+        .silex-id-1727670843663-9 {top: 350px; left: 320px; height: 30px; width: 40px; text-align: center; color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640013983-0 > div > div {border-color: rgb(0, 0, 0);
+        }
+        .silex-id-1730640013983-0 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1727675907121-10 {top: 440px; left: 100px; height: 60px; width: 260px; text-align: left; background-color: transparent; color: rgb(255, 255, 255);
+        }
+        .silex-id-1725126734063-27 {top: 530px; left: 100px; height: 40px; width: 300px; text-align: left; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);
+        }
+        .silex-id-1725127415836-28 {top: 580px; left: 200px; height: 40px; width: 40px;
+        }
+        .silex-id-1725127428263-29 {top: 610px; left: 200px; height: 20px; width: 40px; text-align: center; color: rgb(255, 255, 255);
+        }
+        .silex-id-1725127432398-30 {top: 630px; left: 200px; height: 40px; width: 40px;
+        }
+        .silex-id-1730640126624-3 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640126624-3 {top: 310px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640126624-3 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640156266-4 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640156266-4 {top: 350px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640156266-4 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640013983-0 {top: 270px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640013983-0 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640201643-5 {top: 390px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640201643-5 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640201643-5 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640231638-6 {top: 430px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640231638-6 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640231638-6 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640254968-7 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640254968-7 {top: 470px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640254968-7 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640277444-8 {top: 510px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640277444-8 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640277444-8 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640302689-9 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640302689-9 {top: 550px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640302689-9 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640340880-10 {top: 590px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640340880-10 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+        .silex-id-1730640340880-10 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640362692-11 > div > div > textarea {background-color: rgb(255, 255, 255);
+        }
+        .silex-id-1730640362692-11 {top: 630px; left: 480px; height: 30px; width: 260px;
+        }
+        .silex-id-1730640362692-11 > .CTATTable--row > .CTATTable--cell {width: 258px; height: 28px;
+        }
+    </style>
+
+
+
+    <style type="text/css" class="silex-style"></style>
+    <script type="text/notjavascript" class="silex-script"></script>
+    <meta name="interface-id" content="multiplicationIntegerToFraction">
+
+    <meta name="asset-map" content="{&quot;blob:https://cdn.ctat.cs.cmu.edu/a947728e-07d5-4ca5-9ac5-a32fad077e18&quot;:{&quot;name&quot;:&quot;Chalkboard.png&quot;,&quot;id&quot;:&quot;1fmhrTJv71sQ3pIph5hO1fog9YDJeSvzK&quot;,&quot;path&quot;:&quot;Chalkboard.png&quot;}}">
+
+
+
+
+
+
+
+
+
+
+    <meta name="parent-data" content="{&quot;id&quot;:&quot;1CksyBNijY5Qo48PLhoGNL-_pk4pF8ItN&quot;, &quot;path&quot;:&quot;/MultiplicationAndDivisionFractionTutor/HTML/multiplicationIntegerToFraction&quot;}">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <style id="current-page-style">
+        .page-page-1{display:inherit; }
+    </style>
+    <!-- Silex HEAD tag do not remove -->
+    <!-- End of Silex HEAD tag do not remove -->
+</head>
+<!--onload = "ctatOnload();"-->
+
+<body data-silex-id="body-initial" class="body-initial prevent-draggable silex-runtime" data-silex-type="container" onload="ctatOnload();" style="" data-new-gr-c-s-loaded="14.1205.0">
+    <div data-silex-id="background-initial" class="background background-initial editable-style container-element prevent-draggable" data-silex-type="container">
+
+        <div data-silex-type="image" class="editable-style silex-id-1725125662221-8 image-element page-page-1 paged-element" data-silex-id="silex-id-1725125662221-8"><img class="silex-element-content" src="blob:https://cdn.ctat.cs.cmu.edu/a947728e-07d5-4ca5-9ac5-a32fad077e18"></div>
+        <div data-silex-type="ctat" class="CTATHintWidget undefined editable-style silex-id-1725125750520-9 page-page-1 paged-element" data-ctat-tabindex="1" data-silex-id="silex-id-1725125750520-9">
+            <table style="width: 100%; height: 100%;">
+                <tbody>
+                    <tr height="125">
+                        <td>
+                            <div class="CTATHintWindow CTATComponent" id="ctatdiv28" data-ctat-component="CTATHintWindow" onkeypress="return noenter(event)" data-ctat-enabled="true"></div>
+                        </td>
+                        <td width="64" style="padding-top: 0px; padding-bottom: 0px;">
+                            <div id="hint" style="margin-bottom: 2px" class="CTATHintButton CTATComponent" data-ctat-component="CTATHintButton" data-ctat-enabled="true"></div>
+                            <div id="done" class="CTATDoneButton CTATComponent" data-ctat-component="CTATDoneButton" data-ctat-enabled="true"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+
+
+
+
+        <div data-silex-type="ctat" class="CTATFractionBar editable-style silex-id-1725125848861-11 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1725125848861-11" id="fractionbar2" data-ctat-component="CTATFractionBar"
+        data-ctat-enabled="false"></div>
+        <div data-silex-type="ctat" class="CTATTextInput editable-style silex-id-1725126136213-12 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1725126136213-12" id="rewholenum" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+
+
+        <div data-silex-type="ctat" class="CTATTextInput editable-style CTATComponent silex-id-1725126333376-17 page-page-1 paged-element" data-ctat-tabindex="1" data-silex-id="silex-id-1725126333376-17" id="reenum1" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+        <div data-silex-type="ctat" class="CTATTextInput editable-style CTATComponent silex-id-1725126333378-18 page-page-1 paged-element" data-ctat-tabindex="1" data-silex-id="silex-id-1725126333378-18" id="redenom1" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1725126333385-19 page-page-1 paged-element" data-silex-id="silex-id-1725126333385-19" id="ctatdiv53" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">____</div>
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1725126397608-21 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1725126397608-21" id="ctatdiv64" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">/</div>
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1725126495285-22 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1725126495285-22" id="ctatdiv31" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">=</div>
+
+
+
+
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1725126734063-27 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1725126734063-27" id="ctatdiv1248" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">Jawaban sederhana (Masukkan pecahan yang telah disederhanakan)</div>
+        <div data-silex-type="ctat" class="CTATTextInput editable-style CTATComponent silex-id-1725127415836-28 page-page-1 paged-element" data-ctat-tabindex="1" data-silex-id="silex-id-1725127415836-28" id="simenum" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1725127428263-29 page-page-1 paged-element" data-silex-id="silex-id-1725127428263-29" id="ctatdiv1253" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">____</div>
+        <div data-silex-type="ctat" class="CTATTextInput editable-style CTATComponent silex-id-1725127432398-30 page-page-1 paged-element" data-ctat-tabindex="1" data-silex-id="silex-id-1725127432398-30" id="simdenom" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+
+
+
+
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1725127618067-36 page-page-1 paged-element" data-silex-id="silex-id-1725127618067-36" id="ctatdiv1275" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">/</div>
+
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1725127675157-39 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1725127675157-39" id="wholenum1" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">N1</div>
+
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1725127754823-41 page-page-1 paged-element" data-silex-id="silex-id-1725127754823-41" id="enum1" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">N1</div>
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1725127758103-42 page-page-1 paged-element" data-silex-id="silex-id-1725127758103-42" id="denom1" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">N1</div>
+
+
+
+
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1727670554931-2 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1727670554931-2" id="ctatdiv77" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">Tuliskan Hasil</div>
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1727670631177-3 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1727670631177-3" id="ctatdiv80" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">Masukkan nilai pecahan soal</div>
+
+
+
+        <div data-silex-type="ctat" class="CTATTextInput editable-style silex-id-1727670799532-7 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1727670799532-7" id="resenum" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+        <div data-silex-type="ctat" class="CTATTextInput editable-style silex-id-1727670824706-8 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1727670824706-8" id="resdenom" data-ctat-component="CTATTextInput" data-ctat-enabled="true"></div>
+        <div data-silex-type="text" class="CTATTextField editable-style text-element CTATComponent silex-id-1727670843663-9 page-page-1 paged-element" data-silex-id="silex-id-1727670843663-9" id="ctatdiv698" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">____</div>
+        <div data-silex-type="text" class="CTATTextField editable-style silex-id-1727675907121-10 text-element page-page-1 paged-element CTATComponent" data-silex-id="silex-id-1727675907121-10" id="ctatdiv703" data-ctat-component="CTATTextBasedComponent" data-ctat-enabled="true"
+        contenteditable="false">Apabila kamu kesulitan melakukan perkalian, perhatikan visualisasi di samping, atau klik hint!</div>
+
+
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640013983-0 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640013983-0" id="fbviz1" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        data-ctat-num-rows="1" data-ctat-num-cols="1" tabindex="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640126624-3 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640126624-3" id="fbviz2" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        data-ctat-num-rows="1" data-ctat-num-cols="1" tabindex="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640156266-4 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640156266-4" id="fbviz3" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        data-ctat-num-cols="1" data-ctat-num-rows="1" tabindex="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640201643-5 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640201643-5" id="fbviz4" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        data-ctat-num-rows="1" data-ctat-num-cols="1" tabindex="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640231638-6 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640231638-6" id="fbviz5" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        data-ctat-num-rows="1" data-ctat-num-cols="1" tabindex="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640254968-7 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640254968-7" id="fbviz6" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        data-ctat-num-rows="1" data-ctat-num-cols="1" tabindex="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640277444-8 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640277444-8" id="fbviz7" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        tabindex="1" data-ctat-num-rows="1" data-ctat-num-cols="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640302689-9 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640302689-9" id="fbviz8" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        tabindex="1" data-ctat-num-rows="1" data-ctat-num-cols="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640340880-10 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640340880-10" id="fbviz9" data-ctat-component="CTATTable" data-ctat-enabled="false"
+        tabindex="1" data-ctat-num-rows="1" data-ctat-num-cols="1"></div>
+        <div data-silex-type="ctat" class="CTATTable editable-style silex-id-1730640362692-11 page-page-1 paged-element CTATComponent" data-ctat-tabindex="1" data-silex-id="silex-id-1730640362692-11" id="fbviz10" data-ctat-component="CTATTable"
+        data-ctat-enabled="false" tabindex="1" data-ctat-num-rows="1" data-ctat-num-cols="1"></div>
+    </div><a id="page-page-1" data-silex-type="page" class="page-element">Page 1</a>
+
+
+
+
+
+
+
+
+    <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
